@@ -58,3 +58,4 @@ export * from "./facilities";
 export * from "./user_facilities";
 export * from "./facility_metrc_credentials";
 export * from "./document_change_requests";
+export * from "./user_onboarding";

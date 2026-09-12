@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.16.0",
   "scripts": {
     "check:env": "node --env-file-if-exists=.env scripts/check-env.mjs",
-    "test": "pnpm --filter @workspace/scripts exec tsx --test ../artifacts/api-server/tests/core.test.ts",
+    "test": "pnpm --filter @workspace/scripts exec tsx --test ../artifacts/api-server/tests/core.test.ts ../artifacts/api-server/tests/onboarding.test.ts",
     "preinstall": "node scripts/check-package-manager.mjs",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "start": "pnpm --filter @workspace/api-server start",

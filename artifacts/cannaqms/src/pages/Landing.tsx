@@ -1,37 +1,55 @@
 import { useAuth } from "@clerk/react";
 import { Redirect, Link } from "wouter";
-import { Button } from "@/components/ui/button";
-
+import { ArrowRight } from "lucide-react";
+import { BrandMark, QualityFlow } from "@/components/BrandMark";
 export default function Landing() {
   const { isSignedIn, isLoaded } = useAuth();
-
-  if (!isLoaded) return null;
-  if (isSignedIn) return <Redirect to="/dashboard" />;
-
+  if (isLoaded && isSignedIn) return <Redirect to="/dashboard" />;
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-background">
-      <header className="px-6 h-16 flex items-center border-b justify-between">
-        <img src="/logo.svg" alt="CannaQ" className="h-8" />
-        <div className="space-x-4">
-          <Link href="/sign-in" className="text-sm font-medium hover:underline">Sign In</Link>
-          <Link href="/sign-up">
-            <Button size="sm">Get Started</Button>
+    <div className="cq-landing">
+      <header>
+        <BrandMark />
+        <nav>
+          <Link className="cq-text-action" href="/sign-in">
+            Sign in
           </Link>
-        </div>
+          <Link className="cq-action" href="/sign-up">
+            Set up workspace <ArrowRight size={16} />
+          </Link>
+        </nav>
       </header>
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-4">
-        <h1 className="text-5xl font-extrabold tracking-tight max-w-3xl mb-6">
-          The Electronic Quality Management System for Cannabis Processors
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mb-10">
-          Built for compliance. Engineered for speed. CannaQ is the source of truth for regulated activities in Michigan processing facilities.
-        </p>
-        <div className="flex space-x-4">
-          <Link href="/sign-up">
-            <Button size="lg" className="h-12 px-8 text-lg">Start Free Trial</Button>
+      <main>
+        <section>
+          <span className="cq-eyebrow">
+            QUALITY MANAGEMENT FOR CANNABIS OPERATIONS
+          </span>
+          <h1>
+            Cannabis quality.
+            <br />
+            From receipt
+            <br />
+            to release.
+          </h1>
+          <p className="cq-lead">
+            Connect your licensed facilities, controlled documents, production
+            records, and quality decisions in one working system.
+          </p>
+          <Link href="/sign-up" className="cq-action">
+            Create your account <ArrowRight size={18} />
           </Link>
-        </div>
+          <div className="cq-landing-domains">
+            <span>DOCUMENT CONTROL</span>
+            <span>PRODUCTION</span>
+            <span>TRACEABILITY</span>
+            <span>QUALITY EVENTS</span>
+          </div>
+        </section>
+        <QualityFlow />
       </main>
+      <footer>
+        <span>CANNAQ / CANNABIS QUALITY MANAGEMENT</span>
+        <span>Connected records. Accountable actions.</span>
+      </footer>
     </div>
   );
 }

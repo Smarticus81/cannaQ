@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { dbContext, pool, schema, db, usersTable, userFacilitiesTable } from "@workspace/db";
-import { asc, eq } from "drizzle-orm";
+import { dbContext, pool, schema, db, usersTable, userFacilitiesTable, facilitiesTable } from "@workspace/db";
+import { and, asc, eq } from "drizzle-orm";
 import { getAuth } from "@clerk/express";
 import { serviceTokenUser } from "../lib/currentUser";
 import { logger } from "../lib/logger";
@@ -101,18 +101,19 @@ async function resolveFacilityForRequest(req: Request): Promise<number | null> {
       user = { id: viaToken.id, activeFacilityId: viaToken.activeFacilityId };
     } else {
       const { userId: clerkUserId } = getAuth(req);
-      if (!clerkUserId) return actingFacilityId;
+      if (!clerkUserId) return null;
       [user] = await db
         .select({ id: usersTable.id, activeFacilityId: usersTable.activeFacilityId })
         .from(usersTable)
         .where(eq(usersTable.clerkUserId, clerkUserId));
     }
-    if (!user) return actingFacilityId;
+    if (!user) return null;
 
     const sites = await db
       .select({ facilityId: userFacilitiesTable.facilityId })
       .from(userFacilitiesTable)
-      .where(eq(userFacilitiesTable.userId, user.id))
+      .innerJoin(facilitiesTable, eq(facilitiesTable.id, userFacilitiesTable.facilityId))
+      .where(and(eq(userFacilitiesTable.userId, user.id), eq(facilitiesTable.isActive, true)))
       .orderBy(asc(userFacilitiesTable.facilityId));
 
     // Their choice only counts while they are still listed there — somebody taken off
@@ -120,7 +121,7 @@ async function resolveFacilityForRequest(req: Request): Promise<number | null> {
     if (user.activeFacilityId && sites.some((s) => s.facilityId === user.activeFacilityId)) {
       return user.activeFacilityId;
     }
-    return sites[0]?.facilityId ?? actingFacilityId;
+    return sites[0]?.facilityId ?? null;
   } catch (error) {
     // A lookup failure must not silently switch someone to a different facility.
     throw error;
@@ -131,12 +132,10 @@ export function facilityContext() {
   return function facilityContextMiddleware(req: Request, res: Response, next: NextFunction): void {
     void resolveFacilityForRequest(req).then((facilityId) => {
 
-    // Nothing to scope to yet (first boot, before the facility is seeded). Fall
-    // through to the ordinary pool rather than failing the request — an app that
-    // will not answer is worse than one that is not yet scoped, and there is only
-    // one facility's worth of data in that state by definition.
+    // New and unassigned accounts may use their personal onboarding endpoints,
+    // which are mounted before this middleware, but never unscoped business data.
     if (facilityId == null) {
-      next();
+      res.status(403).json({ error: "Your administrator needs to assign an active facility.", code: "FACILITY_ACCESS_REQUIRED" });
       return;
     }
 

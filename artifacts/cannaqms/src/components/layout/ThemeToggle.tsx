@@ -1,43 +1,65 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 import { Moon, Sun } from "lucide-react";
-
-// Theme toggle (2026-08-12). Dark is the default — the inline bootstrap in
-// index.html adds the `dark` class to <html> before first paint (no flash),
-// reading the saved choice from localStorage. This button flips it and persists
-// the choice. All theming flows from that `dark` class via the tokens in
-// index.css, so nothing else needs to know about the current mode.
-const STORAGE_KEY = "cannaqms-theme";
-
-function currentIsDark(): boolean {
-  if (typeof document === "undefined") return true;
-  return document.documentElement.classList.contains("dark");
-}
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import {
+  useOnboarding,
+  onboardingRequest,
+  onboardingKey,
+  applyPreferences,
+} from "@/lib/onboarding";
 
 export function ThemeToggle() {
-  const [isDark, setIsDark] = useState(currentIsDark);
-
-  // Sync to whatever the bootstrap applied on load.
-  useEffect(() => { setIsDark(currentIsDark()); }, []);
-
-  function toggle() {
-    const next = !isDark;
-    setIsDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    try { localStorage.setItem(STORAGE_KEY, next ? "dark" : "light"); } catch { /* ignore */ }
+  const { data } = useOnboarding();
+  const client = useQueryClient();
+  const { toast } = useToast();
+  const [busy, setBusy] = useState(false);
+  const [systemDark, setSystemDark] = useState(
+    () => window.matchMedia("(prefers-color-scheme: dark)").matches,
+  );
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const update = () => setSystemDark(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+  const dark =
+    data?.draft.theme === "dark" ||
+    (data?.draft.theme === "system" && systemDark);
+  async function toggle() {
+    if (!data || busy) return;
+    setBusy(true);
+    try {
+      const next = await onboardingRequest("PATCH", "", {
+        revision: data.revision,
+        draft: { ...data.draft, theme: dark ? "light" : "dark" },
+      });
+      client.setQueryData(onboardingKey, next);
+      applyPreferences(next.draft);
+    } catch {
+      toast({
+        title: "Your appearance couldn't be saved",
+        description: "Please try again. Your current preference is unchanged.",
+        variant: "destructive",
+      });
+      void client.invalidateQueries({ queryKey: onboardingKey });
+    } finally {
+      setBusy(false);
+    }
   }
-
   return (
     <Button
       variant="ghost"
       size="icon"
       className="h-8 w-8 shrink-0"
-      onClick={toggle}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      onClick={() => void toggle()}
+      disabled={!data || busy}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      title={dark ? "Switch to light mode" : "Switch to dark mode"}
       data-testid="button-theme-toggle"
     >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {dark ? <Sun /> : <Moon />}
     </Button>
   );
 }

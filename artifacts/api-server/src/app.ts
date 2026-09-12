@@ -15,6 +15,9 @@ import { logger } from "./lib/logger";
 import { requireActiveUser } from "./middlewares/requireActiveUser";
 import { getOrProvisionCurrentUser } from "./lib/currentUser";
 import healthRouter from "./routes/health";
+import { db } from "@workspace/db";
+import { createOnboardingService } from "./services/onboarding";
+import { createOnboardingRouter } from "./routes/onboarding";
 
 const app: Express = express();
 
@@ -51,7 +54,9 @@ app.use(clerkMiddleware());
 // for to the database, so new records are stamped with it and (from step 2) the
 // database itself refuses to return another site's rows. Mounted on /api only:
 // serving the SPA's static files has no business holding a database connection.
-app.use("/api", requireActiveUser(getOrProvisionCurrentUser), facilityContext(), router);
+app.use("/api", requireActiveUser(getOrProvisionCurrentUser));
+app.use("/api", createOnboardingRouter(createOnboardingService(db), getOrProvisionCurrentUser));
+app.use("/api", facilityContext(), router);
 
 // Session 42 — serve the cannaqms SPA from a single container on Railway.
 // Replit ran the api-server and the Vite dev server as separate processes;

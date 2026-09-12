@@ -44,6 +44,7 @@ export default defineConfig({
     host: "0.0.0.0",
     allowedHosts: true,
     proxy: {
+      "/review-api": { target: "http://127.0.0.1:3002", rewrite: (url: string) => url.replace(/^\/review-api/, "/api") },
       "/api": process.env.API_PROXY_TARGET ?? "http://localhost:3001",
     },
     fs: {

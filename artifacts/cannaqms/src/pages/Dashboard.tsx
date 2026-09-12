@@ -1143,7 +1143,8 @@ export default function Dashboard() {
           return (
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">{greeting}</h1>
+                <span className="cq-eyebrow">YOUR WORKING DAY, IN FOCUS</span>
+                <h1 className="cq-dashboard-greeting">{greeting}.</h1>
                 <div className="text-muted-foreground text-sm mt-0.5">
                   {today}
                   {lastUpdated && (

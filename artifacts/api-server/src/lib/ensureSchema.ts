@@ -1,5 +1,7 @@
+import { MEMBERSHIP_SCHEMA_SQL } from "./membershipSchema";
 import { pool } from "@workspace/db";
 import { logger } from "./logger";
+import { ONBOARDING_SCHEMA_SQL } from "./onboardingSchema";
 
 // Session 59.2 — auto-apply idempotent schema on startup so a schema change no
 // longer requires manually running SQL in the Railway console. Every statement
@@ -1293,14 +1295,7 @@ ALTER TABLE documents ADD COLUMN IF NOT EXISTS facility_id INTEGER REFERENCES fa
 -- WHO WORKS WHERE. A join table, not a column on users: one human can cover two
 -- plants, and a second user account for the same person would split their Part 11
 -- signature identity.
-CREATE TABLE IF NOT EXISTS user_facilities (
-  id               SERIAL PRIMARY KEY,
-  user_id          INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  facility_id      INTEGER NOT NULL REFERENCES facilities(id) ON DELETE CASCADE,
-  role_at_facility TEXT,
-  created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-CREATE UNIQUE INDEX IF NOT EXISTS user_facilities_user_facility_key ON user_facilities(user_id, facility_id);
+${MEMBERSHIP_SCHEMA_SQL}
 
 -- BACKFILL. Every existing record predates facilities, so it belongs to the one
 -- facility that was seeded from the company profile. Each statement only touches
@@ -1343,10 +1338,8 @@ BEGIN
     EXECUTE format('ALTER TABLE %I ENABLE TRIGGER USER', v_table);
   END LOOP;
 
-  -- Everyone currently in the system works at the one site that exists.
-  INSERT INTO user_facilities (user_id, facility_id)
-  SELECT u.id, v_facility FROM users u
-  ON CONFLICT (user_id, facility_id) DO NOTHING;
+  -- Membership is explicit. Re-granting everyone at every boot would restore
+  -- revoked access and expose records to newly registered accounts.
 END $mf$;
 
 -- Scoped reads land in Phase 2; the indexes they need are cheap to have now.
@@ -2257,6 +2250,7 @@ END $do$;
 `;
 
 export async function ensureSchema(): Promise<void> {
+  await pool.query(ONBOARDING_SCHEMA_SQL);
   await pool.query(SCHEMA_SQL);
   logger.info("ensureSchema: idempotent schema applied");
 
