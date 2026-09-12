@@ -7,8 +7,13 @@ import { onboardingRequest } from "../src/lib/onboarding";
 import type { OnboardingSnapshot } from "@workspace/api-zod";
 import "../src/index.css";
 import "../src/product.css";
+const scenario = new URLSearchParams(window.location.search).get("scenario");
+const apiBase =
+  scenario && ["member", "returning", "pending"].includes(scenario)
+    ? `/review-api/review/${scenario}/`
+    : "/review-api/";
 const reviewRequest: typeof onboardingRequest = (method, suffix, body) =>
-  onboardingRequest(method, suffix, body, "/review-api/");
+  onboardingRequest(method, suffix, body, apiBase);
 function Preview() {
   const [data, setData] = useState<OnboardingSnapshot>();
   const [done, setDone] = useState(false);

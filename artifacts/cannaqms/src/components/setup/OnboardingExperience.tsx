@@ -116,10 +116,14 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const step = draft.step;
+  const returning =
+    !!snapshot.completedAt &&
+    !snapshot.needsWorkspace &&
+    !snapshot.accessPending;
   useEffect(() => {
     headingRef.current?.focus({ preventScroll: true });
     setValidation({});
-  }, [step, paused]);
+  }, [step, paused, snapshot.accessPending]);
 
   const errorFor = (field: string) =>
     validation[field] || (error?.field === field ? error.message : "");
@@ -205,7 +209,7 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
               key={chapter}
               aria-label={`Step ${index + 1}: ${chapter}`}
               className={`cq-chapter ${index === step ? "is-current" : ""} ${index < step ? "is-complete" : ""}`}
-              disabled={busy || index > step || paused}
+              disabled={busy || (!returning && index > step) || paused}
               onClick={() => void onNavigate(index)}
               aria-current={step === index ? "step" : undefined}
             >
@@ -231,7 +235,9 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
       </aside>
       <main className="cq-onboarding-main">
         <header className="cq-onboarding-header">
-          <span className="cq-eyebrow">WORKSPACE SETUP</span>
+          <span className="cq-eyebrow">
+            {returning ? "WORKSPACE PREFERENCES" : "WORKSPACE SETUP"}
+          </span>
           <div className="cq-save-state" role="status" aria-live="polite">
             {props.saveStatus === "saved" ? (
               <>
@@ -828,7 +834,7 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
                   onClick={() => void onDefer()}
                   disabled={busy}
                 >
-                  Save for later
+                  {returning ? "Save and return" : "Save for later"}
                 </button>
                 <button
                   className="cq-action"
@@ -842,7 +848,9 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
                   {busy
                     ? "Saving…"
                     : step === 5
-                      ? "Activate workspace"
+                      ? returning
+                        ? "Open workspace"
+                        : "Activate workspace"
                       : step === 0
                         ? "Start setup"
                         : "Continue"}

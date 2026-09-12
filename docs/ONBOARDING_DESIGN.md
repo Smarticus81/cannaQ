@@ -73,6 +73,18 @@ unrequested AI, emotional inference, or voice functionality.
   saves, dark/compact/focused preferences, reload, connection-loss recovery and
   stale-tab recovery. Mobile review covered 390px and 320px widths. Shared layout,
   record filtering, detail presentation and a form dialog were rendered separately.
+  Mobile keyboard checks verified focus containment and Escape return focus.
+- Assigned-operator onboarding passed in the browser with a read-only facility
+  summary and production starting workflow. Pending staff could pause, resume,
+  and retrieve a newly assigned facility without losing their identity confirmation.
+  Returning-user preferences survived save/return and reload. Completed users can
+  move directly between steps and return after editing their preferences.
+- The full local application passed file upload, attachment registration and
+  byte-for-byte download checks. Anonymous access, missing files, unsupported
+  content types and downloads of unattached blobs were rejected.
+- Metrc configuration and facilities diagnostics correctly reported missing
+  configuration. Neither the source .env nor source database currently supplies
+  vendor/user credentials; no live Metrc request or write was attempted.
 - Production build and type checks pass. The build explicitly selects production
   mode so a development NODE_ENV in the local .env cannot bundle React debug code.
   Main entry: 463 KB (143 KB gzip); batch detail: 243 KB (60 KB gzip).
@@ -81,8 +93,10 @@ unrequested AI, emotional inference, or voice functionality.
 ## Remaining verification
 
 Clerk email verification is pending in the real application tab. Full signed-in
-browser journeys on the copied database, joining-staff and returning-user browser
-coverage, and integration checks for uploads and Metrc remain outstanding.
+browser journeys on the copied database and live Metrc connectivity remain
+outstanding. Upload transport is verified; the signed-in attachment UI still
+needs browser review. The additional staff and returning-user journeys above
+used the isolated SQL-backed onboarding harness.
 The isolated review pages are evidence for shared UI and onboarding behavior;
 they are not evidence that every production workflow or external service works.
 
@@ -100,3 +114,8 @@ The onboarding preview uses an in-memory SQL fixture and a loopback-only API on
 port 3002. POST /review/fault with {"unavailable":true} to that fixture API to test
 save failure; send false to recover. Preview entry points are excluded from the
 production build. The normal /api proxy still targets the real application API.
+
+The onboarding review also accepts ?scenario=member, ?scenario=pending and
+?scenario=returning. These use a second isolated database containing a configured
+facility. POST /review/assign on port 3002 simulates assigning the pending fixture
+user, so the access-refresh path can be reviewed without live account changes.
