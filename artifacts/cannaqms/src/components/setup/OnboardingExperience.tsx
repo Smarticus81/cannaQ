@@ -280,7 +280,11 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
             onSubmit={(event) => void advance(event)}
             noValidate
           >
-            <section className="cq-onboarding-content" key={step}>
+            <fieldset
+              className="cq-onboarding-content"
+              key={step}
+              disabled={busy}
+            >
               <div className="cq-chapter-heading">
                 <span className="cq-eyebrow">
                   STEP {String(step + 1).padStart(2, "0")}{" "}
@@ -809,7 +813,7 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
                   </button>
                 </div>
               )}
-            </section>
+            </fieldset>
             <footer className="cq-onboarding-footer">
               <div>
                 {step > 0 ? (

@@ -79,6 +79,8 @@ unrequested AI, emotional inference, or voice functionality.
   and retrieve a newly assigned facility without losing their identity confirmation.
   Returning-user preferences survived save/return and reload. Completed users can
   move directly between steps and return after editing their preferences.
+  A five-second delayed save verified that fields stay disabled until the final
+  save/exit action finishes, preventing late edits from being discarded.
 - The full local application passed file upload, attachment registration and
   byte-for-byte download checks. Anonymous access, missing files, unsupported
   content types and downloads of unattached blobs were rejected.
@@ -119,3 +121,6 @@ The onboarding review also accepts ?scenario=member, ?scenario=pending and
 ?scenario=returning. These use a second isolated database containing a configured
 facility. POST /review/assign on port 3002 simulates assigning the pending fixture
 user, so the access-refresh path can be reviewed without live account changes.
+
+For slow-save review, POST {"delayMs":5000} to /review/fault, then reset with
+{"delayMs":0}. Delay applies only to fixture mutations and is capped at five seconds.

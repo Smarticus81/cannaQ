@@ -55,11 +55,15 @@ app.post("/review/assign", async (_req, res) => {
   res.json({ assigned: true });
 });
 let unavailable = false;
+let delayMs = 0;
 app.post("/review/fault", (req, res) => {
   unavailable = req.body.unavailable === true;
-  res.json({ unavailable });
+  delayMs = Math.min(5000, Math.max(0, Number(req.body.delayMs) || 0));
+  res.json({ unavailable, delayMs });
 });
-app.use("/api", (_req, res, next) => {
+app.use("/api", async (req, res, next) => {
+  if (req.method !== "GET" && delayMs)
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
   if (unavailable)
     res.status(503).json({
       error:
