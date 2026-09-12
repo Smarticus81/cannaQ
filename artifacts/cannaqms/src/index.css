@@ -1,0 +1,583 @@
+@layer theme, base, clerk, components, utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  /* Status traffic-light (Session 97, #6) — exposes utilities like
+     border-l-status-urgent, text-status-good, bg-status-caution. Status only. */
+  --color-status-good: hsl(var(--status-good));
+  --color-status-caution: hsl(var(--status-caution));
+  --color-status-urgent: hsl(var(--status-urgent));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-primary-border: var(--sidebar-primary-border);
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-accent-border: var(--sidebar-accent-border);
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* LIGHT MODE */
+:root {
+  --button-outline: rgba(0,0,0, .10);
+  --badge-outline: rgba(0,0,0, .05);
+
+  /* Automatic computation of border around primary / danger buttons */
+  --opaque-button-border-intensity: -8; /* In terms of percentages */
+
+  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .08);
+
+  --background: 0 0% 100%;
+
+  --foreground: 169 36% 17%;
+
+  --border: 154 14% 90%;
+
+  --card: 0 0% 100%;
+
+  --card-foreground: 169 36% 17%;
+
+  --card-border: 154 14% 90%;
+
+  /* Calming green theme (Session 96): soft header band + barely-there page tint.
+     Vibrant --primary green stays reserved for the primary CTA so it still pops. */
+  --header-band: 152 22% 90%;
+  --app-canvas: 150 25% 97%;
+
+  /* Status accents (traffic-light) — direct red/green/amber so a warning reads
+     as a warning (Jonathan 2026-08-12). Soft palette elsewhere; status only. */
+  --status-good: 142 76% 36%;    /* #16A34A */
+  --status-caution: 39 90% 40%;  /* #C2820A */
+  --status-urgent: 0 72% 51%;    /* #DC2626 */
+
+  --sidebar: 152 25% 11%;
+
+  --sidebar-foreground: 210 40% 98%;
+
+  --sidebar-border: 152 20% 18%;
+
+  --sidebar-primary: 160 60% 30%;
+
+  --sidebar-primary-foreground: 355.7 100% 97.3%;
+
+  --sidebar-accent: 217.2 32.6% 17.5%;
+
+  --sidebar-accent-foreground: 210 40% 98%;
+
+  --sidebar-ring: 212.7 26.8% 83.9%;
+
+  --popover: 0 0% 100%;
+
+  --popover-foreground: 169 36% 17%;
+
+  --popover-border: 154 14% 90%;
+
+  --primary: 160 60% 30%;
+
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 153 18% 95%;
+
+  --secondary-foreground: 169 36% 17%;
+
+  --muted: 153 18% 95%;
+
+  --muted-foreground: 162 9% 46%;
+
+  --accent: 210 40% 96.1%;
+
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 4 63% 50%;
+
+  --destructive-foreground: 0 0% 100%;
+
+  --input: 154 14% 90%;
+  --ring: 160 60% 30%;
+  /* Validated soft categorical palette (colorblind-checked): blue, gold, teal,
+     violet, leaf — see 2026-08-12 palette approval. */
+  --chart-1: 212 46% 44%;  /* #3D6EA5 */
+  --chart-2: 40 61% 47%;   /* #C1902F */
+  --chart-3: 165 63% 33%;  /* #1F8A70 */
+  --chart-4: 295 26% 50%;  /* #9B5FA0 */
+  --chart-5: 91 44% 44%;   /* #6FA33F */
+
+  --app-font-sans: 'Inter', sans-serif;
+  --app-font-serif: Georgia, serif;
+  --app-font-mono: Menlo, monospace;
+  --radius: .5rem; /* 8px */
+  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00); /*replace with H S L */
+  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00); /*replace with H S L */
+  --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
+
+  /* Fallback for older browsers */
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+}
+
+.dark {
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .05);
+
+  --opaque-button-border-intensity: 9;  /* In terms of percentages */
+
+  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
+
+  /* Approved deep green-slate dark palette (2026-08-12). See [[theme-palette]]. */
+  --background: 152 24% 11%;      /* #14211B */
+
+  --foreground: 150 22% 93%;      /* #E9F1EC */
+
+  --border: 148 19% 23%;          /* #2F4539 */
+
+  --card: 152 21% 14%;            /* #1D2C25 */
+
+  --card-foreground: 150 22% 93%;
+
+  --card-border: 148 19% 23%;
+
+  --header-band: 152 20% 13%;
+  --app-canvas: 152 24% 11%;
+
+  /* Status accents (traffic-light) — direct red/green/amber, brightened for the
+     dark canvas. Same meaning as light; status only. */
+  --status-good: 142 70% 45%;    /* #22C55E */
+  --status-caution: 40 90% 60%;  /* #F5B63D */
+  --status-urgent: 0 84% 62%;    /* bright red */
+
+  --sidebar: 152 26% 9%;
+
+  --sidebar-foreground: 150 22% 93%;
+
+  --sidebar-border: 152 20% 18%;
+
+  --sidebar-primary: 160 45% 50%;
+
+  --sidebar-primary-foreground: 355.7 100% 97.3%;
+
+  --sidebar-accent: 217.2 32.6% 17.5%;
+
+  --sidebar-accent-foreground: 210 40% 98%;
+
+  --sidebar-ring: 212.7 26.8% 83.9%;
+
+  --popover: 222.2 84% 4.9%;
+
+  --popover-foreground: 210 40% 98%;
+
+  --popover-border: 217.2 32.6% 17.5%;
+
+  --primary: 160 45% 50%;        /* #46B892 */
+
+  --primary-foreground: 152 45% 8%;
+
+  --secondary: 152 18% 20%;
+
+  --secondary-foreground: 150 22% 93%;
+
+  --muted: 152 18% 20%;
+
+  --muted-foreground: 156 8% 80%;  /* was #98AEA5 (sage, 64%) — brightened for dark-mode legibility of status/section labels */
+
+  --accent: 152 18% 22%;
+
+  --accent-foreground: 150 22% 93%;
+
+  --destructive: 0 75% 55%;
+
+  --destructive-foreground: 0 0% 100%;
+
+  /* Used as the border around inputs. Dark mode: Should be a border that is light enough to have high contrast when rendered on a --card background. More contrast than standard --border */
+  --input: 148 19% 26%;
+  --ring: 160 45% 50%;
+  /* Validated dark categorical set (colorblind-checked): blue, gold, teal, violet, leaf. */
+  --chart-1: 214 48% 55%;  /* #5787C4 */
+  --chart-2: 36 52% 47%;   /* #B8863A */
+  --chart-3: 165 53% 39%;  /* #2F9A7F */
+  --chart-4: 287 34% 58%;  /* #A86FB8 */
+  --chart-5: 92 39% 46%;   /* #74A548 */
+
+  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dark-mode adaptation of hardcoded pastel utilities (2026-08-12).
+   The app was built light-first with ~220 ad-hoc `bg-<hue>-50 / text-<hue>-700 /
+   border-<hue>-200` status callouts and white/gray cards. Rather than edit each
+   JSX site, remap those specific utilities for dark centrally here. Unlayered
+   rules with a `.dark ` ancestor outrank Tailwind's layered utilities, so no
+   !important is needed. Semantic status meaning is preserved (red stays red,
+   etc.), just tuned for the dark surface.
+   ───────────────────────────────────────────────────────────────────────────── */
+.dark .bg-red-50    { background-color: #2a1615; }
+.dark .bg-red-100   { background-color: #351a18; }
+.dark .border-red-200 { border-color: #5b2a27; }
+.dark .text-red-600, .dark .text-red-700, .dark .text-red-800, .dark .text-red-900 { color: #fca5a5; }
+
+.dark .bg-orange-50  { background-color: #2c1a0d; }
+.dark .bg-orange-100 { background-color: #35200f; }
+.dark .border-orange-200 { border-color: #593a1c; }
+.dark .text-orange-600, .dark .text-orange-700, .dark .text-orange-800, .dark .text-orange-900 { color: #fdba74; }
+
+.dark .bg-amber-50  { background-color: #2a1f0d; }
+.dark .bg-amber-100 { background-color: #33270f; }
+.dark .border-amber-200 { border-color: #57411a; }
+.dark .text-amber-600, .dark .text-amber-700, .dark .text-amber-800, .dark .text-amber-900 { color: #fcd77a; }
+
+.dark .bg-yellow-50  { background-color: #29240c; }
+.dark .bg-yellow-100 { background-color: #322c0f; }
+.dark .border-yellow-200 { border-color: #55491a; }
+.dark .text-yellow-600, .dark .text-yellow-700, .dark .text-yellow-800, .dark .text-yellow-900 { color: #fde047; }
+
+.dark .bg-green-50  { background-color: #10241a; }
+.dark .bg-green-100 { background-color: #143020; }
+.dark .border-green-200 { border-color: #1f4a33; }
+.dark .text-green-600, .dark .text-green-700, .dark .text-green-800, .dark .text-green-900 { color: #86efac; }
+
+.dark .bg-emerald-50  { background-color: #0f241d; }
+.dark .bg-emerald-100 { background-color: #133026; }
+.dark .border-emerald-200 { border-color: #1c4a3b; }
+.dark .text-emerald-600, .dark .text-emerald-700, .dark .text-emerald-800, .dark .text-emerald-900 { color: #6ee7b7; }
+
+.dark .bg-blue-50  { background-color: #14233c; }
+.dark .bg-blue-100 { background-color: #182c49; }
+.dark .border-blue-200 { border-color: #274a7a; }
+.dark .text-blue-600, .dark .text-blue-700, .dark .text-blue-800, .dark .text-blue-900 { color: #93c5fd; }
+
+/* Neutral surfaces & text (slate / gray / white / black). */
+.dark .bg-white     { background-color: hsl(var(--card)); }
+.dark .bg-slate-50, .dark .bg-gray-50 { background-color: hsl(var(--card)); }
+.dark .bg-slate-100, .dark .bg-gray-100 { background-color: hsl(var(--muted)); }
+.dark .border-slate-200, .dark .border-gray-200 { border-color: hsl(var(--border)); }
+.dark .text-black,
+.dark .text-slate-900, .dark .text-gray-900,
+.dark .text-slate-800, .dark .text-gray-800 { color: hsl(var(--foreground)); }
+.dark .text-slate-700, .dark .text-gray-700,
+.dark .text-slate-600, .dark .text-gray-600 { color: hsl(var(--muted-foreground)); }
+
+/* Recharts axis / tick / label text defaults to dark gray (#666) — hard to read
+   on the dark canvas, and Jonathan wants it crisper in light too. Bind it to the
+   theme foreground so it's near-black ink in light mode and near-white in dark,
+   legible across every chart. Legend text and tooltips carry their own colors. */
+.recharts-cartesian-axis-tick-value,
+.recharts-cartesian-axis-tick-value tspan,
+.recharts-label,
+.recharts-polar-angle-axis-tick-value tspan { fill: hsl(var(--foreground)); }
+
+/* Dark-mode Cancel / destructive-text buttons = white button with red text
+   (Jonathan 2026-08-12). Targets labeled destructive-text buttons only (the
+   `text-destructive` class sits on those buttons; icon-only delete buttons put
+   it on the SVG, so they're unaffected). The red-fill `destructive` variant is
+   excluded so it stays red. */
+.dark button.text-destructive:not(.bg-destructive) {
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--status-urgent));
+  border-color: hsl(var(--foreground));
+}
+.dark button.text-destructive:not(.bg-destructive):hover {
+  background-color: #ffffff;
+  color: hsl(var(--status-urgent));
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  /* Number fields: hide the native up/down stepper arrows app-wide (e.g. the
+     Units produced field on the Packaging tab). Typing and paste still work —
+     only the tiny spinner arrows are removed, and the accidental
+     scroll-wheel-changes-the-value trap goes with them in most browsers. */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+/**
+ * Using the elevate system.
+ * Automatic contrast adjustment.
+ *
+ * <element className="hover-elevate" />
+ * <element className="active-elevate-2" />
+ *
+ * // Using the tailwind utility when a data attribute is "on"
+ * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
+ * // Or manually controlling the toggle state
+ * <element className="toggle-elevate toggle-elevated" />
+ *
+ * Elevation systems have to handle many states.
+ * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
+ * - toggled or not
+ * - focused or not (this is not handled with these utilities)
+ *
+ * Even without handling focused or not, this is six possible combinations that
+ * need to be distinguished from eachother visually.
+ */
+@layer utilities {
+
+  /* Hide ugly search cancel button in Chrome until we can style it properly */
+  input[type="search"]::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  /* Placeholder styling for contentEditable div */
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
+   * buttons/badges can remove the automatic brightness adjustment on interactions
+   * and program their own. */
+  .no-default-hover-elevate {}
+
+  .no-default-active-elevate {}
+
+
+  /**
+   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
+   * This way they can stack/compound. Both will overlap the parent's borders!
+   * So borders will be automatically adjusted both on toggle, and hover/active,
+   * and they will be compounded.
+   */
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: -1;
+    /* sits behind content but above backdrop */
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  /* Does not work on elements with overflow:hidden! */
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: 999;
+    /* sits in front of content */
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
+    inset: -1px;
+  }
+}
+
+@page {
+  margin: 1.5cm 1.5cm 1.8cm 1.5cm; /* extra bottom room for the running footer */
+  size: A4 portrait;
+  /* Standards-compliant page numbering. Rendered by print-to-PDF engines and
+     Firefox; Chrome currently ignores @page margin boxes (harmless there — the
+     running footer below still stamps every page, and Chrome's own print dialog
+     can add page numbers via its "Headers and footers" option). */
+  @bottom-right {
+    content: "Page " counter(page) " of " counter(pages);
+    font-size: 9pt;
+    color: #64748b;
+  }
+}
+
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  /* Layout */
+  aside, nav, [data-sidebar], header > nav { display: none !important; }
+  main { padding-left: 0 !important; padding-top: 0 !important; }
+
+  /* Running footer (BatchDetail print record): a position:fixed element repeats
+     on every printed page in Chrome, so each page stays identified to the batch
+     + facility even if separated. Reserve bottom space so it never overlaps the
+     last line of content. */
+  .print-running-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-top: 3px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 8pt;
+    color: #64748b;
+    text-align: center;
+  }
+  body { padding-bottom: 1.2cm; }
+
+  /* Tabs: force all panels visible */
+  [role="tabpanel"] { display: block !important; visibility: visible !important; opacity: 1 !important; }
+  [data-state="inactive"][role="tabpanel"] { display: block !important; }
+  [role="tablist"], [role="tab"] { display: none !important; }
+
+  /* Buttons hidden globally (pages add print:block overrides where needed) */
+  button { display: none !important; }
+
+  /* Links */
+  a { color: inherit !important; text-decoration: none !important; }
+
+  /* Card page breaks */
+  .rounded-lg, [class*="rounded"] { break-inside: avoid; }
+  section { break-inside: avoid; }
+
+  /* Typography */
+  body { font-size: 11pt; }
+  h1 { font-size: 18pt; }
+  h2 { font-size: 14pt; }
+  h3 { font-size: 12pt; }
+
+  /* Remove shadows and decorative backgrounds */
+  * { box-shadow: none !important; }
+}

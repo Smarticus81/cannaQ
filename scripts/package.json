@@ -1,0 +1,25 @@
+{
+  "name": "@workspace/scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "tsx ./src/seed.ts",
+    "seed-recipes": "tsx ./src/seed-recipes.ts",
+    "seed-recipe-steps": "tsx ./src/seed-recipe-steps.ts",
+    "migrate-testing-columns": "tsx ./src/migrate-testing-columns.ts",
+    "reset-sandbox": "tsx ./src/reset-sandbox.ts",
+    "metrc-smoke": "tsx ./src/metrc-smoke.ts",
+    "set-test-passwords": "tsx ./src/set-test-passwords.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@clerk/backend": "^2.33.6",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/pg": "^8.23.1",
+    "tsx": "catalog:"
+  }
+}

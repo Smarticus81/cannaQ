@@ -1,0 +1,6051 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: CannaQMS API - Electronic Quality Management System
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: users
+  - name: company
+  - name: regulatory
+  - name: suppliers
+  - name: inspections
+  - name: inventory
+  - name: batches
+  - name: testing
+  - name: labeling
+  - name: nonconformances
+  - name: complaints
+  - name: fieldactions
+  - name: packaging
+  - name: auditlog
+  - name: dashboard
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ─── USERS ───────────────────────────────────────────────────────────────────
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/me:
+    get:
+      operationId: getCurrentUser
+      tags: [users]
+      summary: Get the current authenticated user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateUser
+      tags: [users]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # ─── COMPANY PROFILE ─────────────────────────────────────────────────────────
+  /company-profile:
+    get:
+      operationId: getCompanyProfile
+      tags: [company]
+      summary: Get company profile
+      responses:
+        "200":
+          description: Company profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyProfile"
+    patch:
+      operationId: updateCompanyProfile
+      tags: [company]
+      summary: Update company profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCompanyProfileBody"
+      responses:
+        "200":
+          description: Updated company profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyProfile"
+
+  # ─── REGULATORY CONFIG ────────────────────────────────────────────────────────
+  /regulatory-config:
+    get:
+      operationId: listRegulatoryConfigs
+      tags: [regulatory]
+      summary: List all regulatory configs
+      responses:
+        "200":
+          description: Regulatory configs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RegulatoryConfig"
+
+  /regulatory-config/{state}:
+    get:
+      operationId: getRegulatoryConfig
+      tags: [regulatory]
+      parameters:
+        - name: state
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Regulatory config for state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegulatoryConfig"
+
+  # ─── SUPPLIERS ────────────────────────────────────────────────────────────────
+  /suppliers:
+    get:
+      operationId: listSuppliers
+      tags: [suppliers]
+      summary: List all suppliers
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of suppliers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Supplier"
+    post:
+      operationId: createSupplier
+      tags: [suppliers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSupplierBody"
+      responses:
+        "201":
+          description: Created supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+
+  /suppliers/{id}:
+    get:
+      operationId: getSupplier
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+    patch:
+      operationId: updateSupplier
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSupplierBody"
+      responses:
+        "200":
+          description: Updated supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+    delete:
+      operationId: deleteSupplier
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /suppliers/{id}/reopen:
+    post:
+      operationId: reopenSupplier
+      tags: [suppliers]
+      summary: Reopen an Approved supplier for revision (Session 32 — Tier 1 #4)
+      description: |
+        Approved suppliers are frozen — every other field is read-only and `PATCH /suppliers/{id}`
+        returns 409. This endpoint flips status from "Approved" to "Pending Review" so the
+        operator can then edit the record through the normal PATCH. A reason is required and
+        is captured to the audit trail.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReopenSupplierBody"
+      responses:
+        "200":
+          description: Supplier reopened (status flipped to Pending Review)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+        "400":
+          description: Reason missing or empty
+        "401":
+          description: Authentication required
+        "404":
+          description: Supplier not found
+        "409":
+          description: Supplier is not currently Approved (already editable)
+
+  /suppliers/{id}/risk-history:
+    get:
+      operationId: getSupplierRiskHistory
+      tags: [suppliers]
+      summary: Monthly risk score history for a supplier (last 13 months)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Risk score history points
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SupplierRiskHistoryPoint"
+
+  /suppliers/{id}/attachments:
+    get:
+      operationId: listSupplierAttachments
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Supplier attachments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SupplierAttachment"
+    post:
+      operationId: createSupplierAttachment
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSupplierAttachmentBody"
+      responses:
+        "201":
+          description: Created attachment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierAttachment"
+
+  /supplier-attachments/{id}:
+    delete:
+      operationId: deleteSupplierAttachment
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── INCOMING INSPECTIONS ────────────────────────────────────────────────────
+  /incoming-inspections:
+    get:
+      operationId: listIncomingInspections
+      tags: [inspections]
+      summary: List incoming inspections
+      responses:
+        "200":
+          description: List of inspections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IncomingInspection"
+    post:
+      operationId: createIncomingInspection
+      tags: [inspections]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateIncomingInspectionBody"
+      responses:
+        "201":
+          description: Created inspection
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomingInspection"
+
+  /incoming-inspections/{id}:
+    get:
+      operationId: getIncomingInspection
+      tags: [inspections]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Inspection
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomingInspection"
+    patch:
+      operationId: updateIncomingInspection
+      tags: [inspections]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateIncomingInspectionBody"
+      responses:
+        "200":
+          description: Updated inspection
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomingInspection"
+
+  # ─── INVENTORY ───────────────────────────────────────────────────────────────
+  /inventory:
+    get:
+      operationId: listInventoryItems
+      tags: [inventory]
+      summary: List inventory items
+      responses:
+        "200":
+          description: Inventory items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryItem"
+    post:
+      operationId: createInventoryItem
+      tags: [inventory]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInventoryItemBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+
+  /inventory/{id}:
+    get:
+      operationId: getInventoryItem
+      tags: [inventory]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Inventory item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+    patch:
+      operationId: updateInventoryItem
+      tags: [inventory]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateInventoryItemBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+
+  # ─── BATCH RECORDS ───────────────────────────────────────────────────────────
+  /batch-records:
+    get:
+      operationId: listBatchRecords
+      tags: [batches]
+      summary: List batch records
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: batchType
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Batch records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BatchRecord"
+    post:
+      operationId: createBatchRecord
+      tags: [batches]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBatchRecordBody"
+      responses:
+        "201":
+          description: Created batch record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchRecord"
+
+  /batch-records/{id}:
+    get:
+      operationId: getBatchRecord
+      tags: [batches]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Batch record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchRecord"
+    patch:
+      operationId: updateBatchRecord
+      tags: [batches]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBatchRecordBody"
+      responses:
+        "200":
+          description: Updated batch record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchRecord"
+
+  /batch-records/{id}/release:
+    post:
+      operationId: releaseBatch
+      tags: [batches]
+      summary: Release batch to finished goods (Part 11 signed)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignatureBody"
+      responses:
+        "200":
+          description: Released batch
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchRecord"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /batch-records/{id}/ingredients:
+    get:
+      operationId: listBatchIngredients
+      tags: [batches]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Batch ingredients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BatchIngredient"
+    post:
+      operationId: createBatchIngredient
+      tags: [batches]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBatchIngredientBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchIngredient"
+
+  /batch-ingredients/{id}:
+    patch:
+      operationId: updateBatchIngredient
+      tags: [batches]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBatchIngredientBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchIngredient"
+    delete:
+      operationId: deleteBatchIngredient
+      tags: [batches]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── BATCH TESTING ───────────────────────────────────────────────────────────
+  /batch-records/{id}/testing:
+    get:
+      operationId: listBatchTestResults
+      tags: [testing]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Test results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BatchTestResult"
+    post:
+      operationId: createBatchTestResult
+      tags: [testing]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBatchTestResultBody"
+      responses:
+        "201":
+          description: Created test result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchTestResult"
+
+  /batch-testing/{id}:
+    patch:
+      operationId: updateBatchTestResult
+      tags: [testing]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBatchTestResultBody"
+      responses:
+        "200":
+          description: Updated test result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchTestResult"
+
+  # ─── LABELING CHECKLISTS ─────────────────────────────────────────────────────
+  /batch-records/{id}/labeling:
+    get:
+      operationId: getBatchLabeling
+      tags: [labeling]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Labeling record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchLabeling"
+
+  /batch-labeling/{id}:
+    patch:
+      operationId: updateBatchLabeling
+      tags: [labeling]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBatchLabelingBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchLabeling"
+
+  /batch-labeling/{id}/approve:
+    post:
+      operationId: approveBatchLabeling
+      tags: [labeling]
+      summary: Approve labeling checklist (Part 11 signed)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignatureBody"
+      responses:
+        "200":
+          description: Approved labeling
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchLabeling"
+
+  /batch-labeling/{id}/checklist-items:
+    get:
+      operationId: listChecklistItems
+      tags: [labeling]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Checklist items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChecklistItem"
+
+  /checklist-items/{id}/response:
+    post:
+      operationId: saveChecklistResponse
+      tags: [labeling]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChecklistResponseBody"
+      responses:
+        "200":
+          description: Saved response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChecklistResponse"
+
+  # ─── NON-CONFORMANCES ────────────────────────────────────────────────────────
+  /non-conformances:
+    get:
+      operationId: listNonConformances
+      tags: [nonconformances]
+      summary: List non-conformances
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: severity
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Non-conformances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NonConformance"
+    post:
+      operationId: createNonConformance
+      tags: [nonconformances]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNonConformanceBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NonConformance"
+
+  /non-conformances/{id}:
+    get:
+      operationId: getNonConformance
+      tags: [nonconformances]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Non-conformance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NonConformance"
+    patch:
+      operationId: updateNonConformance
+      tags: [nonconformances]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNonConformanceBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NonConformance"
+
+  /non-conformances/{id}/approve:
+    post:
+      operationId: approveNonConformance
+      tags: [nonconformances]
+      summary: Approve NC disposition (Part 11 signed)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignatureBody"
+      responses:
+        "200":
+          description: Approved NC
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NonConformance"
+
+  /non-conformances/{id}/corrective-actions:
+    get:
+      operationId: listCorrectiveActions
+      tags: [nonconformances]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Corrective actions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CorrectiveAction"
+    post:
+      operationId: createCorrectiveAction
+      tags: [nonconformances]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCorrectiveActionBody"
+      responses:
+        "201":
+          description: Created corrective action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrectiveAction"
+
+  /corrective-actions/{id}:
+    patch:
+      operationId: updateCorrectiveAction
+      tags: [nonconformances]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCorrectiveActionBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrectiveAction"
+
+  # ─── NC CORRECTIONS (Session 11 task model; spec'd Session 25) ───────────────
+  # Containment / correction tasks taken in response to a non-conformance.
+  # Distinct from CorrectiveAction above (the legacy NC-side corrective-action
+  # log) and from CAPA action items (which are root-cause-driven preventive
+  # actions). The lifecycle: an NC originator opens a correction task with
+  # description, due date, and a task owner; only the assigned owner OR a
+  # Supervisor+ approver may later mark it complete. Once completed the row
+  # is immutable (Part 11 traceability). Legacy `performedBy*` / `notes` /
+  # `performedAt` columns remain on rows created before Session 11; new UI
+  # does not surface them.
+  /non-conformances/{id}/corrections:
+    get:
+      operationId: listNcCorrections
+      tags: [nonconformances]
+      summary: List correction tasks for a non-conformance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: NC correction tasks (ordered by performedAt)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NcCorrection"
+    post:
+      operationId: createNcCorrection
+      tags: [nonconformances]
+      summary: Open a correction task on a non-conformance
+      description: |
+        Creates a new correction task. The acting user is recorded in the
+        legacy `performedBy*` columns for audit continuity. The new task
+        starts with `completed: false`.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNcCorrectionBody"
+      responses:
+        "201":
+          description: Correction task created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NcCorrection"
+        "400":
+          description: Task description is required
+
+  /nc-corrections/{id}:
+    patch:
+      operationId: updateNcCorrection
+      tags: [nonconformances]
+      summary: Edit a correction task (only while open)
+      description: |
+        Updates a not-yet-completed correction task. Completed tasks are
+        immutable per 21 CFR Part 11 — the server returns 409 if the
+        correction is already marked complete.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNcCorrectionBody"
+      responses:
+        "200":
+          description: Updated correction task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NcCorrection"
+        "400":
+          description: No editable fields provided
+        "404":
+          description: Correction task not found
+        "409":
+          description: Completed correction tasks are immutable
+
+  /nc-corrections/{id}/complete:
+    post:
+      operationId: completeNcCorrection
+      tags: [nonconformances]
+      summary: Mark a correction task complete
+      description: |
+        Marks the correction task complete and records `completedAt`,
+        `completedByUserId`, and `completedByName` from the signed-in user.
+        Authorization: the actor must be either the assigned task owner
+        (matched by `taskOwnerUserId` or case-insensitive `taskOwnerName`)
+        OR hold a Supervisor / Manager / Quality / Admin role. Idempotent:
+        if the task is already completed the existing row is returned.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Completed correction task (or existing if already complete)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NcCorrection"
+        "401":
+          description: Authentication required
+        "403":
+          description: Only the assigned task owner or a Supervisor+ approver may complete
+        "404":
+          description: Correction task not found
+
+  # ─── COMPLAINTS ──────────────────────────────────────────────────────────────
+  /complaints:
+    get:
+      operationId: listComplaints
+      tags: [complaints]
+      summary: List complaints
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Complaints
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Complaint"
+    post:
+      operationId: createComplaint
+      tags: [complaints]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateComplaintBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Complaint"
+
+  /complaints/{id}:
+    get:
+      operationId: getComplaint
+      tags: [complaints]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Complaint
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Complaint"
+    patch:
+      operationId: updateComplaint
+      tags: [complaints]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateComplaintBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Complaint"
+
+  # ─── SUPPLIER QUALIFICATIONS ──────────────────────────────────────────────────
+  /supplier-qualifications:
+    get:
+      operationId: listSupplierQualifications
+      tags: [supplierqualifications]
+      summary: List supplier qualification records
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: riskLevel
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: supplierId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Supplier qualifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SupplierQualification"
+    post:
+      operationId: createSupplierQualification
+      tags: [supplierqualifications]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSupplierQualBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierQualification"
+
+  /supplier-qualifications/{id}:
+    get:
+      operationId: getSupplierQualification
+      tags: [supplierqualifications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Supplier qualification record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierQualification"
+    patch:
+      operationId: updateSupplierQualification
+      tags: [supplierqualifications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSupplierQualBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierQualification"
+
+  # ─── DOCUMENT CONTROL ────────────────────────────────────────────────────────
+  /documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      summary: List controlled documents
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+    post:
+      operationId: createDocument
+      tags: [documents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDocumentBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      tags: [documents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Document with revision history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentWithRevisions"
+    patch:
+      operationId: updateDocument
+      tags: [documents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDocumentBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}/request-review:
+    post:
+      operationId: requestDocumentReview
+      tags: [documents]
+      summary: Assign reviewer + approver and move document to Under Review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestReviewBody"
+      responses:
+        "200":
+          description: Document moved to Under Review
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}/sign-review:
+    post:
+      operationId: signDocumentReview
+      tags: [documents]
+      summary: Reviewer signs the document (Part 11 e-signature)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignDocumentBody"
+      responses:
+        "200":
+          description: Reviewer signature recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}/approve:
+    post:
+      operationId: approveDocument
+      tags: [documents]
+      summary: Approver signs and the document becomes Active (Part 11 e-signature)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApproveDocumentBody"
+      responses:
+        "200":
+          description: Document approved and active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}/obsolete:
+    post:
+      operationId: obsoleteDocument
+      tags: [documents]
+      summary: Mark document obsolete (Part 11 e-signature)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignDocumentBody"
+      responses:
+        "200":
+          description: Document marked obsolete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}/new-revision:
+    post:
+      operationId: startDocumentRevision
+      tags: [documents]
+      summary: Start a new revision (supersedes the current Approved version)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewRevisionBody"
+      responses:
+        "200":
+          description: New revision started in Draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  # ─── TRAINING RECORDS ────────────────────────────────────────────────────────
+  /training:
+    get:
+      operationId: listTraining
+      tags: [training]
+      summary: List training records
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: employee
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Training records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrainingRecord"
+    post:
+      operationId: createTraining
+      tags: [training]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTrainingBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingRecord"
+
+  /training/stats:
+    get:
+      operationId: getTrainingStats
+      tags: [training]
+      summary: Get training summary counts
+      responses:
+        "200":
+          description: Training stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingStats"
+
+  /training/{id}:
+    get:
+      operationId: getTrainingRecord
+      tags: [training]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Training record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingRecord"
+    patch:
+      operationId: updateTrainingRecord
+      tags: [training]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTrainingBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingRecord"
+
+  # ─── FIELD ACTIONS ───────────────────────────────────────────────────────────
+  /field-actions:
+    get:
+      operationId: listFieldActions
+      tags: [fieldactions]
+      summary: List field actions (recalls, withdrawals, advisories)
+      responses:
+        "200":
+          description: Field actions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FieldAction"
+    post:
+      operationId: createFieldAction
+      tags: [fieldactions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFieldActionBody"
+      responses:
+        "201":
+          description: Created field action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FieldAction"
+
+  /field-actions/{id}:
+    get:
+      operationId: getFieldAction
+      tags: [fieldactions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Field action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FieldAction"
+    patch:
+      operationId: updateFieldAction
+      tags: [fieldactions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFieldActionBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FieldAction"
+
+  /field-actions/{id}/close:
+    post:
+      operationId: closeFieldAction
+      tags: [fieldactions]
+      summary: Close a field action (Part 11 signed)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignatureBody"
+      responses:
+        "200":
+          description: Closed field action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FieldAction"
+
+  # ─── FIELD ACTION RESPONSE ACTIONS (Session 13) ──────────────────────────────
+  /field-actions/{id}/response-actions:
+    get:
+      operationId: listFaResponseActions
+      tags: [fieldactions]
+      summary: List per-store response actions for a field action
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Response actions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FaResponseAction"
+    post:
+      operationId: createFaResponseAction
+      tags: [fieldactions]
+      summary: Add a per-store response action
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFaResponseActionBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaResponseAction"
+
+  /field-actions/{id}/response-actions/{raId}:
+    patch:
+      operationId: updateFaResponseAction
+      tags: [fieldactions]
+      summary: Update a per-store response action
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: raId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFaResponseActionBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaResponseAction"
+    delete:
+      operationId: deleteFaResponseAction
+      tags: [fieldactions]
+      summary: Delete a per-store response action
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: raId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── CAPAs (Session 20 — full path block) ────────────────────────────────────
+  /capas:
+    get:
+      operationId: listCapas
+      tags: [capas]
+      summary: List all CAPAs
+      responses:
+        "200":
+          description: CAPAs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Capa"
+    post:
+      operationId: createCapa
+      tags: [capas]
+      summary: Open a new CAPA (originator = current user)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCapaBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  /capas/{id}:
+    get:
+      operationId: getCapa
+      tags: [capas]
+      summary: Get a CAPA with its action items and source links
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: CAPA detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapaDetail"
+    patch:
+      operationId: updateCapa
+      tags: [capas]
+      summary: Update safe metadata (lifecycle fields go through workflow endpoints)
+      description: >
+        PATCH is restricted to a whitelist (title, description, RCA, EC criteria, product
+        context, per-phase due dates, root-cause categories, originator + EC owner
+        re-assignment). Lifecycle / signature columns (status, closedAt, gate signatures,
+        effectiveness verification) must flow through dedicated workflow endpoints to
+        preserve Part 11 controls. After Gate 1 approval the bundle becomes
+        read-only — attempts to PATCH locked fields return 409.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCapaBody"
+      responses:
+        "200":
+          description: Updated CAPA
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  /capas/{id}/advance:
+    post:
+      operationId: advanceCapaStatus
+      tags: [capas]
+      summary: (Legacy) advance the linear status one step
+      description: >
+        Original Session-1 linear status workflow. Coexists with the gated
+        /advance-stage / gate1-approve / gate2-approve flow shipped in Session 4.
+        New UI prefers /advance-stage.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated CAPA
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  /capas/{id}/advance-stage:
+    post:
+      operationId: advanceCapaStage
+      tags: [capas]
+      summary: Advance one stage in the planning or execution ramp
+      description: >
+        Only the non-gated transitions (Initiation→Investigation, Investigation→Action
+        Planning, Action Planning→EC Planning, Action Execution→EC Execution). Gate
+        transitions (EC Planning→Action Execution, EC Execution→Closed) use the gate
+        endpoints below.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Stage advanced
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  /capas/{id}/gate0-approve:
+    post:
+      operationId: gate0ApproveCapa
+      tags: [capas]
+      summary: Sign Gate 0 (Manager/Quality acceptance, single approver)
+      description: >
+        Session 35 — Manager / Quality / Admin only (no Supervisors). Body
+        { initials, signatureMeaning }. Stage must be Initiation. Originator
+        cannot sign their own. On approval, the CAPA advances Initiation →
+        Investigation and the six gate0_* fields are stamped. No reject
+        endpoint by design — if the reviewer doesn't accept, they simply do
+        not sign and the originator keeps editing in Initiation.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Gate0ApproveBody"
+      responses:
+        "200":
+          description: Gate 0 acceptance recorded — CAPA advanced to Investigation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+        "401":
+          description: Authentication required
+        "403":
+          description: Role not eligible (Manager / Quality / Admin required)
+        "404":
+          description: CAPA not found
+        "409":
+          description: Stage is not Initiation, or originator attempting to self-accept, or state changed during request
+
+  /capas/{id}/gate1-approve:
+    post:
+      operationId: gate1ApproveCapa
+      tags: [capas]
+      summary: Sign Gate 1 (pre-implementation approval; two distinct approvers)
+      description: >
+        Body { initials, signatureMeaning }. Server chooses slot 1 or 2 based on
+        current state; a single user cannot sign both slots; the originator
+        cannot sign at all. After slot 2 signs, the CAPA advances to
+        Action Execution and the problem-statement / RCA / action-plan / EC-plan
+        bundle becomes immutable.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Gate1ApproveBody"
+      responses:
+        "200":
+          description: Gate 1 sign-off recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  /capas/{id}/gate1-reject:
+    post:
+      operationId: gate1RejectCapa
+      tags: [capas]
+      summary: Reject Gate 1 (mandatory comment, rollback to Investigation or Planning)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Gate1RejectBody"
+      responses:
+        "200":
+          description: Rejected — CAPA returned to chosen stage
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  /capas/{id}/gate2-approve:
+    post:
+      operationId: gate2ApproveCapa
+      tags: [capas]
+      summary: Sign Gate 2 (closure outcome, Pass or Fail)
+      description: >
+        Pass closes the CAPA. Fail requires a comment and rollback target
+        (Investigation or Planning) and re-opens the relevant stage.
+        Approver cannot be the originator, EC Owner, or any action-item owner
+        (Part 11 segregation of duties).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Gate2ApproveBody"
+      responses:
+        "200":
+          description: Gate 2 outcome recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  /capas/{id}/verify-effectiveness:
+    post:
+      operationId: verifyCapaEffectiveness
+      tags: [capas]
+      summary: Sign the effectiveness check (Supervisor+)
+      description: >
+        One-time write. Approver-eligible role required; initials must match
+        the user's own. Records the outcome and locks subsequent re-verification.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyCapaEffectivenessBody"
+      responses:
+        "200":
+          description: Effectiveness verification recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  /capas/{id}/close:
+    post:
+      operationId: closeCapa
+      tags: [capas]
+      summary: Close a CAPA (Manager, Quality, or Admin only — Part 11)
+      description: >
+        Requires Manager, Quality, or Admin role. Effectiveness must be signed
+        and every action item must be Verified before close is allowed.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CloseCapaBody"
+      responses:
+        "200":
+          description: CAPA closed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capa"
+
+  # ── Effectiveness-check AI suggestions (spec'd Session 30) ────────────────
+  # Generates AI-assisted effectiveness-check criteria suggestions based on
+  # the CAPA's existing action items. The server reads action items directly
+  # from the database (no body fields are required); the soft-fail response
+  # is `{ suggestions: [] }` so the UI can degrade gracefully when the AI
+  # backend is unavailable. Authentication is required.
+  /capas/{id}/effectiveness-suggestions:
+    post:
+      operationId: suggestCapaEffectiveness
+      tags: [capas]
+      summary: Generate AI-suggested effectiveness-check criteria
+      description: |
+        Returns a list of suggested effectiveness-check criteria. The server
+        reads the CAPA's existing action items from the database, so the
+        request body is not required. On any backend failure the server
+        soft-fails to `{ suggestions: [] }` rather than returning an error,
+        so the caller does not need to special-case empty results.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Suggestion list (possibly empty)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapaEffectivenessSuggestions"
+        "401":
+          description: Authentication required
+
+  /capas/{id}/action-items:
+    get:
+      operationId: listCapaActionItemsForCapa
+      tags: [capas]
+      summary: List action items for a single CAPA
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Action items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CapaActionItem"
+    post:
+      operationId: createCapaActionItem
+      tags: [capas]
+      summary: Add an action item to a CAPA
+      description: >
+        Adding the first action item auto-advances the CAPA from Action Planning
+        to EC Planning (Session 12).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCapaActionItemBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapaActionItem"
+
+  /capas/{id}/action-items/{itemId}:
+    patch:
+      operationId: updateCapaActionItem
+      tags: [capas]
+      summary: Update an action item (description, owner, due date, notes, or status to Completed)
+      description: >
+        Status can be set to Open, In Progress, or Completed. Verified requires
+        the separate /verify endpoint (independent signer). When the status is set
+        to Completed, the server stamps the actor as the completer.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCapaActionItemBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapaActionItem"
+    delete:
+      operationId: deleteCapaActionItem
+      tags: [capas]
+      summary: Delete an action item (only allowed before Verified)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /capas/{id}/action-items/{itemId}/verify:
+    post:
+      operationId: verifyCapaActionItem
+      tags: [capas]
+      summary: Independent verifier signs a Completed action item (Part 11)
+      description: >
+        Four-eyes rule — the verifier must not be the user who marked the item
+        Completed. Approver-eligible role required; initials must match the
+        signer's account.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyCapaActionItemBody"
+      responses:
+        "200":
+          description: Verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapaActionItem"
+
+  # ─── CAPA ACTION ITEMS (Session 18 aggregate) ────────────────────────────────
+  /capa-action-items:
+    get:
+      operationId: listCapaActionItems
+      tags: [capas]
+      summary: List CAPA action items across all CAPAs, optionally filtered by assignee
+      description: >
+        Aggregate endpoint used by the Dashboard My Queue and the CAPAs page
+        ?queue=action_assignee filter. Avoids N+1 fetching of per-CAPA action
+        items. The per-CAPA equivalents live at /capas/{id}/action-items but
+        are not yet spec'd; this endpoint is the only one needed by the
+        Dashboard slice.
+      parameters:
+        - name: assignedToName
+          in: query
+          required: false
+          description: Exact-match filter on action item assignedToName
+          schema:
+            type: string
+        - name: open
+          in: query
+          required: false
+          description: Pass 1 or true to return only status=Open items (excludes Completed and Verified)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of CAPA action items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CapaActionItem"
+
+  # ─── PACKAGING DESIGN APPROVALS ──────────────────────────────────────────────
+  /packaging-designs:
+    get:
+      operationId: listPackagingDesigns
+      tags: [packaging]
+      summary: List packaging design approvals
+      responses:
+        "200":
+          description: Packaging designs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PackagingDesign"
+    post:
+      operationId: createPackagingDesign
+      tags: [packaging]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePackagingDesignBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PackagingDesign"
+
+  /packaging-designs/{id}:
+    get:
+      operationId: getPackagingDesign
+      tags: [packaging]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Packaging design
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PackagingDesign"
+    patch:
+      operationId: updatePackagingDesign
+      tags: [packaging]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePackagingDesignBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PackagingDesign"
+
+  /packaging-designs/{id}/approve:
+    post:
+      operationId: approvePackagingDesign
+      tags: [packaging]
+      summary: Approve packaging design (Part 11 signed)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignatureBody"
+      responses:
+        "200":
+          description: Approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PackagingDesign"
+
+  # ─── AUDIT LOG ───────────────────────────────────────────────────────────────
+  /audit-log:
+    get:
+      operationId: listAuditLog
+      tags: [auditlog]
+      summary: List audit log entries
+      parameters:
+        - name: tableName
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: rowId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: operation
+          in: query
+          required: false
+          description: "INSERT | UPDATE | DELETE"
+          schema:
+            type: string
+        - name: changedBy
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from
+          in: query
+          required: false
+          description: ISO date string start of range
+          schema:
+            type: string
+        - name: to
+          in: query
+          required: false
+          description: ISO date string end of range
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 200
+      responses:
+        "200":
+          description: Audit log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLogEntry"
+
+  # ─── DASHBOARD ───────────────────────────────────────────────────────────────
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary counts
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/batch-status-breakdown:
+    get:
+      operationId: getBatchStatusBreakdown
+      tags: [dashboard]
+      summary: Batch records by status
+      responses:
+        "200":
+          description: Batch status breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StatusCount"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent compliance activity feed
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Recent activity (audit log entries)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLogEntry"
+
+  /dashboard/open-items:
+    get:
+      operationId: getOpenItems
+      tags: [dashboard]
+      summary: Open NCs, complaints, and field actions requiring attention
+      responses:
+        "200":
+          description: Open items requiring attention
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenItemsDetail"
+
+  /dashboard/testing-metrics:
+    get:
+      operationId: getDashboardTestingMetrics
+      tags: [dashboard]
+      summary: Operations testing-throughput aggregates (Session 37 — Tier 3 #15)
+      description: >
+        Aggregates batch_testing rows over a rolling window. Returns pass /
+        fail / pending counts plus the average turnaround time (sample-pulled
+        to result-received) for results that landed in the window. Pass and
+        Fail counts honor `resultDate within window`; the pending count is
+        unwindowed so operators see the full backlog. Avg turnaround prefers
+        the Session 36 `samplePulledAt` field and falls back to the legacy
+        `submittedDate` for pre-Session-36 rows.
+      parameters:
+        - name: days
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 90
+            minimum: 1
+      responses:
+        "200":
+          description: Testing metrics for the requested window
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardTestingMetrics"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SignatureBody:
+      type: object
+      properties:
+        initials:
+          type: string
+        signatureMeaning:
+          type: string
+        userId:
+          type: integer
+      required:
+        - initials
+        - signatureMeaning
+        - userId
+
+    # ── Users ────────────────────────────────────────────────────────────────
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        clerkUserId:
+          type: ["string", "null"]
+        fullName:
+          type: string
+        email:
+          type: string
+        initials:
+          type: string
+        role:
+          type: string
+          description: "Admin | Manager | Supervisor | Quality | Operator"
+        active:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - fullName
+        - email
+        - initials
+        - role
+        - active
+        - createdAt
+
+    CreateUserBody:
+      type: object
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+        initials:
+          type: string
+        role:
+          type: string
+        clerkUserId:
+          type: ["string", "null"]
+      required:
+        - fullName
+        - email
+        - initials
+        - role
+
+    UpdateUserBody:
+      type: object
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+        initials:
+          type: string
+        role:
+          type: string
+        active:
+          type: boolean
+
+    # ── Company Profile ──────────────────────────────────────────────────────
+    CompanyProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        companyName:
+          type: string
+        licenseNumber:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        city:
+          type: ["string", "null"]
+        state:
+          type: ["string", "null"]
+        zip:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        contactPerson:
+          type: ["string", "null"]
+        timeZone:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - companyName
+        - updatedAt
+
+    UpdateCompanyProfileBody:
+      type: object
+      properties:
+        companyName:
+          type: string
+        licenseNumber:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        city:
+          type: ["string", "null"]
+        state:
+          type: ["string", "null"]
+        zip:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        contactPerson:
+          type: ["string", "null"]
+        timeZone:
+          type: ["string", "null"]
+
+    # ── Regulatory Config ────────────────────────────────────────────────────
+    RegulatoryConfig:
+      type: object
+      properties:
+        id:
+          type: integer
+        state:
+          type: string
+        maxThcPerServing:
+          type: number
+        maxThcPerContainer:
+          type: number
+        potencyTolerancePct:
+          type: number
+        retentionYears:
+          type: integer
+        tracingSystem:
+          type: ["string", "null"]
+        additionalConfig:
+          type: object
+          additionalProperties: true
+      required:
+        - id
+        - state
+        - maxThcPerServing
+        - maxThcPerContainer
+        - potencyTolerancePct
+        - retentionYears
+
+    # ── Suppliers ────────────────────────────────────────────────────────────
+    Supplier:
+      type: object
+      properties:
+        id:
+          type: integer
+        supplierName:
+          type: string
+        contactPerson:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        licenseNumber:
+          type: ["string", "null"]
+        supplierType:
+          type: string
+          description: "Cannabis Material | Packaging Material | Production Material | Testing Laboratory | Service Provider | Other"
+        status:
+          type: string
+          description: "Approved | Pending Review | License Pending | Conditional | Disqualified | Suspended | Unapproved"
+        qualityRating:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        requalificationIntervalYears:
+          type: integer
+          description: "How often this supplier must be re-qualified: 1, 2, 3, 4, or 5 years"
+          default: 1
+        lastQualifiedDate:
+          type: ["string", "null"]
+          format: date
+          description: "Most recent approval date from an approved qualification record"
+        nextReviewDue:
+          type: ["string", "null"]
+          format: date
+          description: "Computed: lastQualifiedDate + requalificationIntervalYears"
+        reviewStatus:
+          type: ["string", "null"]
+          description: "overdue | due-soon | current | never-qualified"
+        riskScore:
+          type: ["integer", "null"]
+          description: "Computed risk score 0–100. Higher is riskier."
+        riskTier:
+          type: ["string", "null"]
+          description: "Low | Medium | High | Critical"
+        riskTierRationale:
+          type: ["string", "null"]
+          description: "Session 33 (Tier 2 #9) — operator's documented reason for the current Risk Tier. Required on every tier change."
+        riskTierSetAt:
+          type: ["string", "null"]
+          format: date-time
+          description: "Server-stamped time of the most recent Risk Tier assignment."
+        riskTierSetByName:
+          type: ["string", "null"]
+          description: "Server-stamped full name of the user who set the current Risk Tier."
+        riskFactors:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: "Human-readable list of factors contributing to the risk score"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - supplierName
+        - supplierType
+        - status
+        - requalificationIntervalYears
+        - createdAt
+        - updatedAt
+
+    CreateSupplierBody:
+      type: object
+      properties:
+        supplierName:
+          type: string
+        contactPerson:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        licenseNumber:
+          type: ["string", "null"]
+        supplierType:
+          type: string
+        status:
+          type: string
+          description: "Approved | Pending Review | License Pending | Conditional | Disqualified | Suspended | Unapproved"
+        qualityRating:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        riskTier:
+          type: ["string", "null"]
+          description: "Low | Medium | High | Critical"
+        riskTierRationale:
+          type: ["string", "null"]
+          description: "Session 33 (Tier 2 #9) — required when riskTier is set."
+      required:
+        - supplierName
+        - supplierType
+        - status
+
+    UpdateSupplierBody:
+      type: object
+      properties:
+        supplierName:
+          type: string
+        contactPerson:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        licenseNumber:
+          type: ["string", "null"]
+        supplierType:
+          type: string
+        status:
+          type: string
+          description: "Approved | Pending Review | License Pending | Conditional | Disqualified | Suspended | Unapproved"
+        qualityRating:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        requalificationIntervalYears:
+          type: integer
+        riskTier:
+          type: ["string", "null"]
+          description: "Low | Medium | High | Critical"
+        riskTierRationale:
+          type: ["string", "null"]
+          description: "Session 33 (Tier 2 #9) — required on every riskTier change."
+
+    ReopenSupplierBody:
+      type: object
+      description: "Session 32 (Tier 1 #4) — reopen an Approved supplier for revision. The reason is recorded to the audit trail."
+      properties:
+        reason:
+          type: string
+          description: "Why the supplier is being reopened (free-text, required, audit-logged)."
+      required:
+        - reason
+
+    SupplierRiskHistoryPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: "First day of the month (YYYY-MM-DD)"
+        riskScore:
+          type: integer
+          description: "Computed risk score 0–100 at this point in time"
+        riskTier:
+          type: string
+          description: "Low | Medium | High | Critical"
+      required:
+        - date
+        - riskScore
+        - riskTier
+
+    SupplierAttachment:
+      type: object
+      properties:
+        id:
+          type: integer
+        supplierId:
+          type: integer
+        fileType:
+          type: string
+          description: "COA | License | Certification | Insurance | SDS | Other"
+        fileName:
+          type: string
+        filePath:
+          type: string
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - supplierId
+        - fileType
+        - fileName
+        - filePath
+        - createdAt
+
+    CreateSupplierAttachmentBody:
+      type: object
+      properties:
+        fileType:
+          type: string
+        fileName:
+          type: string
+        filePath:
+          type: string
+        notes:
+          type: ["string", "null"]
+      required:
+        - fileType
+        - fileName
+        - filePath
+
+    # ── Incoming Inspections ─────────────────────────────────────────────────
+    IncomingInspection:
+      type: object
+      properties:
+        id:
+          type: integer
+        inspectionNumber:
+          type: string
+        supplierId:
+          type: ["integer", "null"]
+        supplierName:
+          type: ["string", "null"]
+        poManifestNumber:
+          type: ["string", "null"]
+        inspectionDate:
+          type: string
+          format: date
+        inspectedBy:
+          type: ["integer", "null"]
+        inspectedByName:
+          type: ["string", "null"]
+        result:
+          type: string
+          description: "Pass | Fail | Conditional Pass"
+        inspectionNotes:
+          type: ["string", "null"]
+        # ── Session 10 — Inspection State rework ─────────────────────────
+        # Rationale required when Fail / Conditional is recorded, persisted
+        # to a structured column with author + timestamp for audit.
+        stateRationale:
+          type: ["string", "null"]
+        stateRationaleByName:
+          type: ["string", "null"]
+        stateRationaleAt:
+          type: ["string", "null"]
+          format: date-time
+        # Supervisor+ Part 11 sign-off required when Pass is granted with
+        # any failed line item.
+        passApproverName:
+          type: ["string", "null"]
+        passApproverInitials:
+          type: ["string", "null"]
+        passApproverMeaning:
+          type: ["string", "null"]
+        passApprovedAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - inspectionNumber
+        - inspectionDate
+        - result
+        - createdAt
+        - updatedAt
+
+    CreateIncomingInspectionBody:
+      type: object
+      properties:
+        supplierId:
+          type: ["integer", "null"]
+        poManifestNumber:
+          type: ["string", "null"]
+        inspectionDate:
+          type: string
+          format: date
+        inspectedBy:
+          type: ["integer", "null"]
+        result:
+          type: string
+        inspectionNotes:
+          type: ["string", "null"]
+      required:
+        - inspectionDate
+        - result
+
+    UpdateIncomingInspectionBody:
+      type: object
+      properties:
+        supplierId:
+          type: ["integer", "null"]
+        poManifestNumber:
+          type: ["string", "null"]
+        inspectionDate:
+          type: string
+          format: date
+        inspectedBy:
+          type: ["integer", "null"]
+        result:
+          type: string
+        inspectionNotes:
+          type: ["string", "null"]
+        # ── Session 10 additions on update ───────────────────────────────
+        stateRationale:
+          type: ["string", "null"]
+        stateRationaleByName:
+          type: ["string", "null"]
+        stateRationaleAt:
+          type: ["string", "null"]
+          format: date-time
+        passApproverName:
+          type: ["string", "null"]
+        passApproverInitials:
+          type: ["string", "null"]
+        passApproverMeaning:
+          type: ["string", "null"]
+        passApprovedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    # ── Inventory ────────────────────────────────────────────────────────────
+    InventoryItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        itemName:
+          type: string
+        itemType:
+          type: string
+          description: "Cannabis Material | Packaging | Production Material | Other"
+        supplierId:
+          type: ["integer", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        quantity:
+          type: number
+        unitOfMeasure:
+          type: string
+        reorderPoint:
+          type: ["number", "null"]
+        reorderQuantity:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+        sourceInspectionItemId:
+          type: ["integer", "null"]
+          description: "Set when this row was auto-created from an Incoming Inspection line item (Session 33). Unique so re-applying Pass on the same inspection is idempotent."
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - itemName
+        - itemType
+        - quantity
+        - unitOfMeasure
+        - createdAt
+        - updatedAt
+
+    CreateInventoryItemBody:
+      type: object
+      properties:
+        itemName:
+          type: string
+        itemType:
+          type: string
+        supplierId:
+          type: ["integer", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        quantity:
+          type: number
+        unitOfMeasure:
+          type: string
+        reorderPoint:
+          type: ["number", "null"]
+        reorderQuantity:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - itemName
+        - itemType
+        - quantity
+        - unitOfMeasure
+
+    UpdateInventoryItemBody:
+      type: object
+      properties:
+        itemName:
+          type: string
+        itemType:
+          type: string
+        supplierId:
+          type: ["integer", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        quantity:
+          type: number
+        unitOfMeasure:
+          type: string
+        reorderPoint:
+          type: ["number", "null"]
+        reorderQuantity:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+
+    # ── Batch Records ────────────────────────────────────────────────────────
+    BatchRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        batchNumber:
+          type: string
+        batchType:
+          type: string
+          description: "Final Form | Finished Good | Bulk Production"
+        processType:
+          type: string
+          description: "Session 36 (Tier 7 C1 scoped) — Cultivation | Kitchen | Inhalants | Pre-roll. Drives which fields the Batch UI surfaces and which regulatory rules apply. Defaults to Kitchen on legacy rows."
+        productType:
+          type: string
+          description: "Flower | Infused Edible | Concentrate | Infused Non-Edible | Topical | Blunt | Other"
+        strainName:
+          type: ["string", "null"]
+        productName:
+          type: string
+        status:
+          type: string
+          description: "in_production | in_inventory_untested | testing_in_progress | passed_awaiting_packaging | released_to_inventory | finished_goods | failed | on_hold | destroyed"
+        scheduledOutputQuantity:
+          type: ["number", "null"]
+          description: "Session 38 (Tier 4 #19) — operator-captured planned output at batch open. Pairs with outputQuantity (actual) for variance display."
+        outputQuantity:
+          type: ["number", "null"]
+        unitOfMeasure:
+          type: ["string", "null"]
+        metrcPackageId:
+          type: ["string", "null"]
+        productionDate:
+          type: ["string", "null"]
+          format: date
+        remediationStatus:
+          type: ["string", "null"]
+          description: "Not Remediated | Remediation Complete"
+        approvedBy:
+          type: ["integer", "null"]
+        approvalName:
+          type: ["string", "null"]
+        approvalInitials:
+          type: ["string", "null"]
+        approvalDate:
+          type: ["string", "null"]
+          format: date-time
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - batchNumber
+        - batchType
+        - processType
+        - productType
+        - productName
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateBatchRecordBody:
+      type: object
+      properties:
+        batchType:
+          type: string
+        processType:
+          type: string
+          description: "Cultivation | Kitchen | Inhalants | Pre-roll (defaults Kitchen at the SQL layer if omitted)"
+        productType:
+          type: string
+        strainName:
+          type: ["string", "null"]
+        productName:
+          type: string
+        scheduledOutputQuantity:
+          type: ["number", "null"]
+          description: "Session 38 (Tier 4 #19) — planned output at batch open."
+        outputQuantity:
+          type: ["number", "null"]
+        unitOfMeasure:
+          type: ["string", "null"]
+        metrcPackageId:
+          type: ["string", "null"]
+        productionDate:
+          type: ["string", "null"]
+          format: date
+        notes:
+          type: ["string", "null"]
+      required:
+        - batchType
+        - productType
+        - productName
+
+    UpdateBatchRecordBody:
+      type: object
+      properties:
+        batchType:
+          type: string
+        processType:
+          type: string
+          description: "Cultivation | Kitchen | Inhalants | Pre-roll"
+        productType:
+          type: string
+        strainName:
+          type: ["string", "null"]
+        productName:
+          type: string
+        status:
+          type: string
+        scheduledOutputQuantity:
+          type: ["number", "null"]
+          description: "Session 38 (Tier 4 #19) — planned output."
+        outputQuantity:
+          type: ["number", "null"]
+        unitOfMeasure:
+          type: ["string", "null"]
+        metrcPackageId:
+          type: ["string", "null"]
+        productionDate:
+          type: ["string", "null"]
+          format: date
+        remediationStatus:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    BatchIngredient:
+      type: object
+      properties:
+        id:
+          type: integer
+        batchId:
+          type: integer
+        inventoryItemId:
+          type: ["integer", "null"]
+        ingredientName:
+          type: string
+        lotNumber:
+          type: ["string", "null"]
+        plannedQuantity:
+          type: ["number", "null"]
+        actualQuantity:
+          type: ["number", "null"]
+        unitOfMeasure:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - batchId
+        - ingredientName
+        - unitOfMeasure
+        - createdAt
+
+    CreateBatchIngredientBody:
+      type: object
+      properties:
+        inventoryItemId:
+          type: ["integer", "null"]
+        ingredientName:
+          type: string
+        lotNumber:
+          type: ["string", "null"]
+        plannedQuantity:
+          type: ["number", "null"]
+        actualQuantity:
+          type: ["number", "null"]
+        unitOfMeasure:
+          type: string
+      required:
+        - ingredientName
+        - unitOfMeasure
+
+    UpdateBatchIngredientBody:
+      type: object
+      properties:
+        ingredientName:
+          type: string
+        lotNumber:
+          type: ["string", "null"]
+        plannedQuantity:
+          type: ["number", "null"]
+        actualQuantity:
+          type: ["number", "null"]
+        unitOfMeasure:
+          type: string
+
+    # ── Batch Testing ────────────────────────────────────────────────────────
+    # Session 36 (Tier 3 #14) — testing tab redesign. The row carries a phase
+    # lifecycle (pre_test → result), a Testing Agency FK to suppliers, and a
+    # state-variable result_values jsonb that supersedes the hardcoded analyte
+    # columns going forward. Legacy columns survive for back-compat display.
+    BatchTestResult:
+      type: object
+      properties:
+        id:
+          type: integer
+        batchId:
+          type: integer
+        sequenceNumber:
+          type: integer
+        phase:
+          type: string
+          description: "Session 36 — pre_test (sample pull) | result (CoA in hand). Defaults to result on legacy rows."
+        sampleWeight:
+          type: ["number", "null"]
+          description: "Session 36 — pre-test row: weight of sample pulled for the lab."
+        sampleUom:
+          type: ["string", "null"]
+          description: "Session 36 — pre-test row: unit of measure for sampleWeight."
+        samplePulledAt:
+          type: ["string", "null"]
+          format: date
+          description: "Session 36 — pre-test row: date the sample was pulled."
+        samplePulledByName:
+          type: ["string", "null"]
+          description: "Session 36 — pre-test row: operator who pulled the sample."
+        testingAgencyId:
+          type: ["integer", "null"]
+          description: "Session 36 — FK to suppliers. Server enforces supplier_type='Testing Laboratory' AND status='Approved'."
+        testingAgency:
+          type: string
+          description: "Legacy free-text agency name (pre-Session-36). Kept for back-compat display; mirrored from the FK supplier name on new rows."
+        submittedDate:
+          type: ["string", "null"]
+          format: date
+        resultDate:
+          type: ["string", "null"]
+          format: date
+        testResult:
+          type: string
+          description: "Pass | Fail | Pending"
+        resultValues:
+          type: ["object", "null"]
+          additionalProperties: true
+          description: "Session 36 — state-variable analyte storage keyed by analyte name (e.g. { thc_pct: 18.4, cbd_pct: 0.5, microbials_pass: true }). Required-analyte list per state lives in regulatory_config.additional_config.requiredAnalytes."
+        thcPct:
+          type: ["number", "null"]
+          description: "Legacy hardcoded analyte (pre-Session-36). New code reads resultValues.thc_pct."
+        cbdPct:
+          type: ["number", "null"]
+        totalCannabinoids:
+          type: ["number", "null"]
+        microbialsPass:
+          type: ["boolean", "null"]
+        pesticidesPass:
+          type: ["boolean", "null"]
+        heavyMetalsPass:
+          type: ["boolean", "null"]
+        residualSolventsPass:
+          type: ["boolean", "null"]
+        vitaminEAcetate:
+          type: ["number", "null"]
+          description: "LOQ in ppm — required for concentrates per CRA Technical Bulletin"
+        mctOilPass:
+          type: ["boolean", "null"]
+        coaUrl:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - batchId
+        - sequenceNumber
+        - phase
+        - testingAgency
+        - testResult
+        - createdAt
+        - updatedAt
+
+    CreateBatchTestResultBody:
+      type: object
+      properties:
+        phase:
+          type: string
+          description: "pre_test | result (defaults to result if omitted)"
+        sampleWeight:
+          type: ["number", "null"]
+        sampleUom:
+          type: ["string", "null"]
+        samplePulledAt:
+          type: ["string", "null"]
+          format: date
+        samplePulledByName:
+          type: ["string", "null"]
+        testingAgencyId:
+          type: ["integer", "null"]
+        testingAgency:
+          type: string
+        submittedDate:
+          type: ["string", "null"]
+          format: date
+        resultDate:
+          type: ["string", "null"]
+          format: date
+        testResult:
+          type: string
+        resultValues:
+          type: ["object", "null"]
+          additionalProperties: true
+        thcPct:
+          type: ["number", "null"]
+        cbdPct:
+          type: ["number", "null"]
+        totalCannabinoids:
+          type: ["number", "null"]
+        microbialsPass:
+          type: ["boolean", "null"]
+        pesticidesPass:
+          type: ["boolean", "null"]
+        heavyMetalsPass:
+          type: ["boolean", "null"]
+        residualSolventsPass:
+          type: ["boolean", "null"]
+        vitaminEAcetate:
+          type: ["number", "null"]
+        mctOilPass:
+          type: ["boolean", "null"]
+        coaUrl:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - testingAgency
+        - testResult
+
+    UpdateBatchTestResultBody:
+      type: object
+      properties:
+        phase:
+          type: string
+        sampleWeight:
+          type: ["number", "null"]
+        sampleUom:
+          type: ["string", "null"]
+        samplePulledAt:
+          type: ["string", "null"]
+          format: date
+        samplePulledByName:
+          type: ["string", "null"]
+        testingAgencyId:
+          type: ["integer", "null"]
+        testingAgency:
+          type: string
+        submittedDate:
+          type: ["string", "null"]
+          format: date
+        resultDate:
+          type: ["string", "null"]
+          format: date
+        testResult:
+          type: string
+        resultValues:
+          type: ["object", "null"]
+          additionalProperties: true
+        thcPct:
+          type: ["number", "null"]
+        cbdPct:
+          type: ["number", "null"]
+        totalCannabinoids:
+          type: ["number", "null"]
+        microbialsPass:
+          type: ["boolean", "null"]
+        pesticidesPass:
+          type: ["boolean", "null"]
+        heavyMetalsPass:
+          type: ["boolean", "null"]
+        residualSolventsPass:
+          type: ["boolean", "null"]
+        vitaminEAcetate:
+          type: ["number", "null"]
+        mctOilPass:
+          type: ["boolean", "null"]
+        coaUrl:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    # ── Batch Labeling ───────────────────────────────────────────────────────
+    BatchLabeling:
+      type: object
+      properties:
+        id:
+          type: integer
+        batchId:
+          type: integer
+        productType:
+          type: string
+        labelVersion:
+          type: ["string", "null"]
+        metrcTagNumber:
+          type: ["string", "null"]
+        labelNotes:
+          type: ["string", "null"]
+        approvedBy:
+          type: ["integer", "null"]
+        approvalName:
+          type: ["string", "null"]
+        approvalInitials:
+          type: ["string", "null"]
+        approvalDate:
+          type: ["string", "null"]
+          format: date-time
+        checklistCompletePct:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - batchId
+        - productType
+        - createdAt
+        - updatedAt
+
+    UpdateBatchLabelingBody:
+      type: object
+      properties:
+        labelVersion:
+          type: ["string", "null"]
+        metrcTagNumber:
+          type: ["string", "null"]
+        labelNotes:
+          type: ["string", "null"]
+
+    ChecklistItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        labelingId:
+          type: integer
+        productType:
+          type: string
+        itemNumber:
+          type: integer
+        itemText:
+          type: string
+        regulationRef:
+          type: string
+        required:
+          type: boolean
+        response:
+          $ref: "#/components/schemas/ChecklistResponse"
+      required:
+        - id
+        - labelingId
+        - productType
+        - itemNumber
+        - itemText
+        - regulationRef
+        - required
+
+    ChecklistResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        checklistItemId:
+          type: integer
+        response:
+          type: string
+          description: "Yes | No | N/A"
+        notes:
+          type: ["string", "null"]
+        respondedBy:
+          type: ["integer", "null"]
+        respondedByName:
+          type: ["string", "null"]
+        respondedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - checklistItemId
+        - response
+        - respondedAt
+
+    ChecklistResponseBody:
+      type: object
+      properties:
+        response:
+          type: string
+        notes:
+          type: ["string", "null"]
+        respondedBy:
+          type: integer
+        initials:
+          type: string
+      required:
+        - response
+        - respondedBy
+        - initials
+
+    # ── Non-Conformances ─────────────────────────────────────────────────────
+    NonConformance:
+      type: object
+      properties:
+        id:
+          type: integer
+        ncNumber:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+          description: "Minor | Major | Critical"
+        status:
+          type: string
+          description: "Open | Under Review | CAPA Required | Closed"
+        source:
+          type: string
+          description: "Batch Failure | Complaint | Audit | Incoming Inspection | Other"
+        batchId:
+          type: ["integer", "null"]
+        supplierId:
+          type: ["integer", "null"]
+        disposition:
+          type: ["string", "null"]
+          description: "Rework | Retest | Destroy | Use As Is | Return to Supplier"
+        rootCause:
+          type: ["string", "null"]
+        # ── Session 11 — multi-select root-cause categories ──────────────
+        rootCauses:
+          type: ["array", "null"]
+          items:
+            type: string
+          description: "Multi-select category picks for metrics; separate from the rootCause free-text narrative."
+        # ── Session 11 — Use-As-Is Part 11 sign-off ──────────────────────
+        useAsIsApproverName:
+          type: ["string", "null"]
+        useAsIsApproverInitials:
+          type: ["string", "null"]
+        useAsIsApproverMeaning:
+          type: ["string", "null"]
+        useAsIsApprovedAt:
+          type: ["string", "null"]
+          format: date-time
+        # ── Session 11 — product context ─────────────────────────────────
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        # ── Session 11 — management acknowledgement (required to close
+        # Major/Critical NCs server-side) ────────────────────────────────
+        mgmtAcknowledgedBy:
+          type: ["integer", "null"]
+        mgmtAcknowledgedName:
+          type: ["string", "null"]
+        mgmtAcknowledgedInitials:
+          type: ["string", "null"]
+        mgmtAcknowledgedAt:
+          type: ["string", "null"]
+          format: date-time
+        mgmtAcknowledgedNotes:
+          type: ["string", "null"]
+        approvedBy:
+          type: ["integer", "null"]
+        approvalName:
+          type: ["string", "null"]
+        approvalInitials:
+          type: ["string", "null"]
+        approvalDate:
+          type: ["string", "null"]
+          format: date-time
+        closedAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - ncNumber
+        - title
+        - description
+        - severity
+        - status
+        - source
+        - createdAt
+        - updatedAt
+
+    CreateNonConformanceBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+        source:
+          type: string
+        batchId:
+          type: ["integer", "null"]
+        supplierId:
+          type: ["integer", "null"]
+        disposition:
+          type: ["string", "null"]
+        rootCause:
+          type: ["string", "null"]
+        # ── Session 11 additions on create ───────────────────────────────
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+      required:
+        - title
+        - description
+        - severity
+        - source
+
+    UpdateNonConformanceBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+        source:
+          type: string
+        batchId:
+          type: ["integer", "null"]
+        supplierId:
+          type: ["integer", "null"]
+        disposition:
+          type: ["string", "null"]
+        rootCause:
+          type: ["string", "null"]
+        closedAt:
+          type: ["string", "null"]
+          format: date-time
+        # ── Session 11 additions on update ───────────────────────────────
+        rootCauses:
+          type: ["array", "null"]
+          items:
+            type: string
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+
+    CorrectiveAction:
+      type: object
+      properties:
+        id:
+          type: integer
+        ncId:
+          type: integer
+        actionDescription:
+          type: string
+        assignedTo:
+          type: ["integer", "null"]
+        assignedToName:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        status:
+          type: string
+          description: "Open | In Progress | Complete | Verified"
+        completedAt:
+          type: ["string", "null"]
+          format: date-time
+        verifiedBy:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - ncId
+        - actionDescription
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateCorrectiveActionBody:
+      type: object
+      properties:
+        actionDescription:
+          type: string
+        assignedTo:
+          type: ["integer", "null"]
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        status:
+          type: string
+      required:
+        - actionDescription
+        - status
+
+    UpdateCorrectiveActionBody:
+      type: object
+      properties:
+        actionDescription:
+          type: string
+        assignedTo:
+          type: ["integer", "null"]
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        status:
+          type: string
+        completedAt:
+          type: ["string", "null"]
+          format: date-time
+        verifiedBy:
+          type: ["integer", "null"]
+
+    # ── NC Corrections (Session 11 task model; spec'd Session 25) ────────────
+    # Containment tasks on a non-conformance — distinct from CorrectiveAction
+    # above. Lifecycle is task-based (assigned owner → completion); the
+    # legacy `performedBy*` / `performedAt` / `notes` columns are preserved
+    # for pre-Session-11 rows but not surfaced in current UI.
+    NcCorrection:
+      type: object
+      properties:
+        id:
+          type: integer
+        ncId:
+          type: integer
+        description:
+          type: string
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        taskOwnerUserId:
+          type: ["integer", "null"]
+        taskOwnerName:
+          type: ["string", "null"]
+        completed:
+          type: boolean
+        completedAt:
+          type: ["string", "null"]
+          format: date-time
+        completedByUserId:
+          type: ["integer", "null"]
+        completedByName:
+          type: ["string", "null"]
+        # Legacy columns preserved for rows created before Session 11.
+        performedByUserId:
+          type: ["integer", "null"]
+        performedByName:
+          type: ["string", "null"]
+        performedAt:
+          type: string
+          format: date-time
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - ncId
+        - description
+        - completed
+        - performedAt
+        - createdAt
+        - updatedAt
+
+    CreateNcCorrectionBody:
+      type: object
+      properties:
+        description:
+          type: string
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        taskOwnerName:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - description
+
+    # All fields optional — server allows partial edits while task is open.
+    # Server rejects with 409 if the correction has already been completed.
+    UpdateNcCorrectionBody:
+      type: object
+      properties:
+        description:
+          type: string
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        taskOwnerName:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    # ── Complaints ───────────────────────────────────────────────────────────
+    Complaint:
+      type: object
+      properties:
+        id:
+          type: integer
+        complaintNumber:
+          type: string
+        receivedDate:
+          type: string
+          format: date
+        customerName:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        batchId:
+          type: ["integer", "null"]
+        complaintType:
+          type: string
+          description: "Product Quality | Adverse Event | Labeling | Packaging | Other"
+        description:
+          type: string
+        severity:
+          type: string
+          description: "Low | Medium | High | Critical"
+        status:
+          type: string
+          description: "Open | Under Investigation | Closed | Escalated to Field Action"
+        investigation:
+          type: ["string", "null"]
+        resolution:
+          type: ["string", "null"]
+        fieldActionId:
+          type: ["integer", "null"]
+        closedAt:
+          type: ["string", "null"]
+          format: date-time
+        # ── Session 38 (Tier 4 #20) — MVP intake expansion. Full FDA × ISO ×
+        # food-reg cross-walk lands later as a Tier 5 effort.
+        reporterName:
+          type: ["string", "null"]
+          description: "Person who filed the complaint. Distinct from customerName (often a dispensary staffer / family member rather than the affected consumer)."
+        reporterEmail:
+          type: ["string", "null"]
+        reporterPhone:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+          description: "Operator-entered lot string. Distinct from batchId FK because the lot may pre-date this install or come from a third party."
+        severityRationale:
+          type: ["string", "null"]
+          description: "Operator's documented reason for the chosen severity."
+        mdrReportable:
+          type: boolean
+          description: "21 CFR Part 803 — Medical Device Reporting flag."
+        mdardReportable:
+          type: boolean
+          description: "Michigan Dept of Agriculture (MDARD) reportable flag."
+        fdaReportable:
+          type: boolean
+          description: "Federal FDA reportable flag."
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - complaintNumber
+        - receivedDate
+        - description
+        - complaintType
+        - severity
+        - status
+        - mdrReportable
+        - mdardReportable
+        - fdaReportable
+        - createdAt
+        - updatedAt
+
+    CreateComplaintBody:
+      type: object
+      properties:
+        receivedDate:
+          type: string
+          format: date
+        customerName:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        batchId:
+          type: ["integer", "null"]
+        complaintType:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+        # Session 38 (Tier 4 #20) — MVP intake expansion fields.
+        reporterName:
+          type: ["string", "null"]
+        reporterEmail:
+          type: ["string", "null"]
+        reporterPhone:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        severityRationale:
+          type: ["string", "null"]
+        mdrReportable:
+          type: ["boolean", "null"]
+        mdardReportable:
+          type: ["boolean", "null"]
+        fdaReportable:
+          type: ["boolean", "null"]
+      required:
+        - receivedDate
+        - description
+        - complaintType
+        - severity
+
+    UpdateComplaintBody:
+      type: object
+      properties:
+        customerName:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        batchId:
+          type: ["integer", "null"]
+        complaintType:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+        investigation:
+          type: ["string", "null"]
+        resolution:
+          type: ["string", "null"]
+        fieldActionId:
+          type: ["integer", "null"]
+        # Session 38 (Tier 4 #20) — MVP intake expansion fields, all optional on update.
+        reporterName:
+          type: ["string", "null"]
+        reporterEmail:
+          type: ["string", "null"]
+        reporterPhone:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        severityRationale:
+          type: ["string", "null"]
+        mdrReportable:
+          type: ["boolean", "null"]
+        mdardReportable:
+          type: ["boolean", "null"]
+        fdaReportable:
+          type: ["boolean", "null"]
+        closedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    # ── Field Actions ────────────────────────────────────────────────────────
+    FieldAction:
+      type: object
+      properties:
+        id:
+          type: integer
+        faNumber:
+          type: string
+        actionType:
+          type: string
+          description: "Voluntary Recall | Regulatory Recall | Stop Sale | Market Withdrawal | Safety Alert | Notification Only (legacy: Recall | Withdrawal | Advisory Notice)"
+        status:
+          type: string
+          description: "Initiated | Scope Defined | Response Active | Due Diligence | Closed"
+        title:
+          type: string
+        initiationReason:
+          type: string
+        affectedBatches:
+          type: ["string", "null"]
+        scopeDescription:
+          type: ["string", "null"]
+        responseActions:
+          type: ["string", "null"]
+          description: "Legacy free-text Response Actions field. Pre-Session-13 FAs may still carry content here; new FAs write structured rows to /field-actions/{id}/response-actions instead."
+        dueDiligenceNotes:
+          type: ["string", "null"]
+        closureNotes:
+          type: ["string", "null"]
+        closedBy:
+          type: ["integer", "null"]
+        closedByName:
+          type: ["string", "null"]
+        closedByInitials:
+          type: ["string", "null"]
+        closedAt:
+          type: ["string", "null"]
+          format: date-time
+        # ── Session 13 additions ────────────────────────────────────────
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        sourceNcId:
+          type: ["integer", "null"]
+        sourceComplaintId:
+          type: ["integer", "null"]
+        linkedCapaId:
+          type: ["integer", "null"]
+        # ────────────────────────────────────────────────────────────────
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - faNumber
+        - actionType
+        - status
+        - title
+        - initiationReason
+        - createdAt
+        - updatedAt
+
+    CreateFieldActionBody:
+      type: object
+      properties:
+        actionType:
+          type: string
+        title:
+          type: string
+        initiationReason:
+          type: string
+        affectedBatches:
+          type: ["string", "null"]
+        scopeDescription:
+          type: ["string", "null"]
+        # ── Session 13 additions ────────────────────────────────────────
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        sourceNcId:
+          type: ["integer", "null"]
+          description: "Optional source NC; the server auto-prefills initiationReason from the NC description when set and initiationReason is empty."
+        sourceComplaintId:
+          type: ["integer", "null"]
+          description: "Optional source Complaint; same auto-prefill behaviour as sourceNcId."
+        linkedCapaId:
+          type: ["integer", "null"]
+      required:
+        - actionType
+        - title
+        - initiationReason
+
+    UpdateFieldActionBody:
+      type: object
+      properties:
+        actionType:
+          type: string
+        status:
+          type: string
+        title:
+          type: string
+        initiationReason:
+          type: string
+        affectedBatches:
+          type: ["string", "null"]
+        scopeDescription:
+          type: ["string", "null"]
+        responseActions:
+          type: ["string", "null"]
+        dueDiligenceNotes:
+          type: ["string", "null"]
+        closureNotes:
+          type: ["string", "null"]
+        # ── Session 13 additions ────────────────────────────────────────
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        sourceNcId:
+          type: ["integer", "null"]
+        sourceComplaintId:
+          type: ["integer", "null"]
+        linkedCapaId:
+          type: ["integer", "null"]
+
+    # ── Session 13 — per-store response action sub-entity ────────────────────
+    FaResponseAction:
+      type: object
+      properties:
+        id:
+          type: integer
+        fieldActionId:
+          type: integer
+        storeName:
+          type: string
+        storeLicenseNumber:
+          type: ["string", "null"]
+        contactName:
+          type: ["string", "null"]
+        contactPhone:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        notificationDate:
+          type: ["string", "null"]
+          format: date
+        method:
+          type: ["string", "null"]
+          description: "Phone | Email | In-Person | Certified Mail | Other"
+        confirmationReference:
+          type: ["string", "null"]
+        unitsAffected:
+          type: ["integer", "null"]
+        unitsReturned:
+          type: ["integer", "null"]
+        productReturned:
+          type: boolean
+        productDestroyed:
+          type: boolean
+        notes:
+          type: ["string", "null"]
+        createdByUserId:
+          type: ["integer", "null"]
+        createdByName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - fieldActionId
+        - storeName
+        - productReturned
+        - productDestroyed
+        - createdAt
+        - updatedAt
+
+    CreateFaResponseActionBody:
+      type: object
+      properties:
+        storeName:
+          type: string
+        storeLicenseNumber:
+          type: ["string", "null"]
+        contactName:
+          type: ["string", "null"]
+        contactPhone:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        notificationDate:
+          type: ["string", "null"]
+          format: date
+        method:
+          type: ["string", "null"]
+        confirmationReference:
+          type: ["string", "null"]
+        unitsAffected:
+          type: ["integer", "null"]
+        unitsReturned:
+          type: ["integer", "null"]
+        productReturned:
+          type: boolean
+        productDestroyed:
+          type: boolean
+        notes:
+          type: ["string", "null"]
+        createdByName:
+          type: ["string", "null"]
+      required:
+        - storeName
+
+    UpdateFaResponseActionBody:
+      type: object
+      properties:
+        storeName:
+          type: string
+        storeLicenseNumber:
+          type: ["string", "null"]
+        contactName:
+          type: ["string", "null"]
+        contactPhone:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        notificationDate:
+          type: ["string", "null"]
+          format: date
+        method:
+          type: ["string", "null"]
+        confirmationReference:
+          type: ["string", "null"]
+        unitsAffected:
+          type: ["integer", "null"]
+        unitsReturned:
+          type: ["integer", "null"]
+        productReturned:
+          type: boolean
+        productDestroyed:
+          type: boolean
+        notes:
+          type: ["string", "null"]
+
+    # ── Packaging Design Approvals ───────────────────────────────────────────
+    PackagingDesign:
+      type: object
+      properties:
+        id:
+          type: integer
+        designName:
+          type: string
+        productType:
+          type: string
+        version:
+          type: string
+        status:
+          type: string
+          description: "Draft | Under Review | Approved | Rejected | Superseded"
+        artworkUrl:
+          type: ["string", "null"]
+        checklistCompletePct:
+          type: ["number", "null"]
+        approvedBy:
+          type: ["integer", "null"]
+        approvalName:
+          type: ["string", "null"]
+        approvalInitials:
+          type: ["string", "null"]
+        approvalDate:
+          type: ["string", "null"]
+          format: date-time
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - designName
+        - productType
+        - version
+        - status
+        - createdAt
+        - updatedAt
+
+    CreatePackagingDesignBody:
+      type: object
+      properties:
+        designName:
+          type: string
+        productType:
+          type: string
+        version:
+          type: string
+        artworkUrl:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - designName
+        - productType
+        - version
+
+    UpdatePackagingDesignBody:
+      type: object
+      properties:
+        designName:
+          type: string
+        productType:
+          type: string
+        version:
+          type: string
+        status:
+          type: string
+        artworkUrl:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    # ── Audit Log ────────────────────────────────────────────────────────────
+    AuditLogEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        tableName:
+          type: string
+        rowId:
+          type: integer
+        operation:
+          type: string
+          description: "INSERT | UPDATE | DELETE"
+        changedBy:
+          type: ["integer", "null"]
+        changedByName:
+          type: ["string", "null"]
+        changedAt:
+          type: string
+          format: date-time
+        beforeState:
+          type: object
+          additionalProperties: true
+          nullable: true
+        afterState:
+          type: object
+          additionalProperties: true
+          nullable: true
+      required:
+        - id
+        - tableName
+        - rowId
+        - operation
+        - changedAt
+
+    # ── Dashboard ────────────────────────────────────────────────────────────
+    DashboardSummary:
+      type: object
+      properties:
+        batchesInProduction:
+          type: integer
+        batchesPendingRelease:
+          type: integer
+        openNonConformances:
+          type: integer
+        criticalNCs:
+          type: integer
+        openComplaints:
+          type: integer
+        criticalComplaints:
+          type: integer
+        openFieldActions:
+          type: integer
+        packagingPendingReview:
+          type: integer
+        openCAPAs:
+          type: integer
+        overdueCapaActionItems:
+          type: integer
+        capaByStatus:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusCount"
+        newAdverseEventsThisWeek:
+          type: integer
+        newNCsThisWeek:
+          type: integer
+        trainingOverdue:
+          type: integer
+        trainingCompletionRate:
+          type: integer
+        approvedSupplierQuals:
+          type: integer
+        expiredSupplierQuals:
+          type: integer
+        documentsUnderReview:
+          type: integer
+        approvedDocuments:
+          type: integer
+        capaEffectivenessOverdue:
+          type: integer
+        capaEffectivenessApproaching:
+          type: integer
+      required:
+        - batchesInProduction
+        - batchesPendingRelease
+        - openNonConformances
+        - criticalNCs
+        - openComplaints
+        - criticalComplaints
+        - openFieldActions
+        - packagingPendingReview
+        - openCAPAs
+        - overdueCapaActionItems
+        - capaByStatus
+        - newAdverseEventsThisWeek
+        - newNCsThisWeek
+        - trainingOverdue
+        - trainingCompletionRate
+        - approvedSupplierQuals
+        - expiredSupplierQuals
+        - documentsUnderReview
+        - approvedDocuments
+        - capaEffectivenessOverdue
+        - capaEffectivenessApproaching
+
+    StatusCount:
+      type: object
+      properties:
+        status:
+          type: string
+        count:
+          type: integer
+      required:
+        - status
+        - count
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        module:
+          type: string
+        action:
+          type: string
+        description:
+          type: string
+        userId:
+          type: ["integer", "null"]
+        userName:
+          type: ["string", "null"]
+        recordId:
+          type: ["integer", "null"]
+        occurredAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - module
+        - action
+        - description
+        - occurredAt
+
+    # CapaDashboardItem is the slim shape used by the /open-items dashboard
+    # endpoint. Extended in Session 19 to surface Session 4/11/12 columns
+    # the dashboard and CAPAs.tsx now consume (stage, originator, EC owner,
+    # gate sign-offs). The full per-row shape is defined as Capa below.
+    CapaDashboardItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        capaNumber:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+        stage:
+          type: ["string", "null"]
+          description: "Initiation | Investigation | Action Planning | EC Planning | Action Execution | EC Execution | Closed"
+        openedByName:
+          type: ["string", "null"]
+        originatorName:
+          type: ["string", "null"]
+        effectivenessOwnerName:
+          type: ["string", "null"]
+        effectivenessCheckDue:
+          type: ["string", "null"]
+        # Gate 1 (pre-implementation) sign-off snapshot — full history in audit_log.
+        gate1Approver1Name:
+          type: ["string", "null"]
+        gate1Approver2Name:
+          type: ["string", "null"]
+        gate1ApprovedAt:
+          type: ["string", "null"]
+          format: date-time
+        # Gate 2 (closure) sign-off snapshot.
+        gate2ApproverName:
+          type: ["string", "null"]
+        gate2Outcome:
+          type: ["string", "null"]
+          description: "Pass | Fail"
+        openActionItems:
+          type: integer
+        totalActionItems:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - capaNumber
+        - type
+        - title
+        - status
+        - openActionItems
+        - totalActionItems
+        - createdAt
+
+    # Full Capa entity — the shape returned by GET /api/capas (not yet
+    # individually spec'd in paths). Added Session 19 so detail-page consumers
+    # can drop the structural-cast workarounds once codegen runs. The
+    # corresponding endpoints are still hand-fetched until a future regen
+    # pass adds them under paths.
+    Capa:
+      type: object
+      properties:
+        id:
+          type: integer
+        capaNumber:
+          type: string
+        type:
+          type: string
+          description: "Corrective | Preventive"
+        title:
+          type: string
+        description:
+          type: string
+        sourceNcId:
+          type: ["integer", "null"]
+        sourceComplaintId:
+          type: ["integer", "null"]
+        # ── Session 35 — consolidated 6-stage CAPA workflow ──────────────
+        # Initiation → [Gate 0] → Investigation → Planning → [Gate 1] →
+        # Action Execution → EC Execution → [Gate 2] → Closed.
+        stage:
+          type: string
+          description: "Initiation | Investigation | Planning | Action Execution | EC Execution | Closed"
+        # Legacy linear status preserved for back-compat.
+        status:
+          type: string
+        # ── Investigation / RCA ──────────────────────────────────────────
+        rootCauseAnalysis:
+          type: ["string", "null"]
+        rcaMethod:
+          type: ["string", "null"]
+          description: "Legacy single-value RCA method; kept for back-compat. New code writes rcaMethods (array)."
+        rcaMethods:
+          type: ["array", "null"]
+          items:
+            type: string
+        # ── Session 12: categorical root-cause multi-select ──────────────
+        rootCauses:
+          type: ["array", "null"]
+          items:
+            type: string
+        # ── Effectiveness Check ──────────────────────────────────────────
+        effectivenessCriteria:
+          type: ["string", "null"]
+        effectivenessCheckDue:
+          type: ["string", "null"]
+          format: date
+        effectivenessVerifiedAt:
+          type: ["string", "null"]
+          format: date-time
+        effectivenessVerifiedById:
+          type: ["integer", "null"]
+        effectivenessVerifiedByName:
+          type: ["string", "null"]
+        effectivenessVerifiedByInitials:
+          type: ["string", "null"]
+        effectivenessOutcome:
+          type: ["string", "null"]
+        effectivenessNotes:
+          type: ["string", "null"]
+        # ── Originator / EC Owner ────────────────────────────────────────
+        originatorId:
+          type: ["integer", "null"]
+        originatorName:
+          type: ["string", "null"]
+        effectivenessOwnerId:
+          type: ["integer", "null"]
+        effectivenessOwnerName:
+          type: ["string", "null"]
+        # ── Session 35 — Gate 0 (Manager/Quality acceptance, single approver) ─
+        # Stamps these six fields when a Manager/Quality/Admin accepts the
+        # CAPA out of Initiation. Originator cannot self-accept. There is no
+        # corresponding gate0-reject — declining = not signing.
+        gate0ApproverId:
+          type: ["integer", "null"]
+        gate0ApproverName:
+          type: ["string", "null"]
+        gate0ApproverInitials:
+          type: ["string", "null"]
+        gate0ApproverAt:
+          type: ["string", "null"]
+          format: date-time
+        gate0ApproverMeaning:
+          type: ["string", "null"]
+        gate0ApprovedAt:
+          type: ["string", "null"]
+          format: date-time
+        # ── Gate 1 (two distinct approvers, Part 11) ─────────────────────
+        gate1Approver1Id:
+          type: ["integer", "null"]
+        gate1Approver1Name:
+          type: ["string", "null"]
+        gate1Approver1Initials:
+          type: ["string", "null"]
+        gate1Approver1At:
+          type: ["string", "null"]
+          format: date-time
+        gate1Approver1Meaning:
+          type: ["string", "null"]
+        gate1Approver2Id:
+          type: ["integer", "null"]
+        gate1Approver2Name:
+          type: ["string", "null"]
+        gate1Approver2Initials:
+          type: ["string", "null"]
+        gate1Approver2At:
+          type: ["string", "null"]
+          format: date-time
+        gate1Approver2Meaning:
+          type: ["string", "null"]
+        gate1ApprovedAt:
+          type: ["string", "null"]
+          format: date-time
+        # ── Gate 2 (single approver, Pass/Fail) ──────────────────────────
+        gate2ApproverId:
+          type: ["integer", "null"]
+        gate2ApproverName:
+          type: ["string", "null"]
+        gate2ApproverInitials:
+          type: ["string", "null"]
+        gate2ApproverAt:
+          type: ["string", "null"]
+          format: date-time
+        gate2ApproverMeaning:
+          type: ["string", "null"]
+        gate2Outcome:
+          type: ["string", "null"]
+        # ── Latest rejection snapshot (full history in audit_log) ────────
+        lastRejectionAt:
+          type: ["string", "null"]
+          format: date-time
+        lastRejectionStage:
+          type: ["string", "null"]
+          description: "Gate 1 | Gate 2"
+        lastRejectionById:
+          type: ["integer", "null"]
+        lastRejectionByName:
+          type: ["string", "null"]
+        lastRejectionComment:
+          type: ["string", "null"]
+        lastRejectionTarget:
+          type: ["string", "null"]
+          description: "Investigation | Action Planning"
+        # ── Open / close audit ────────────────────────────────────────────
+        openedById:
+          type: ["integer", "null"]
+        openedByName:
+          type: ["string", "null"]
+        closedById:
+          type: ["integer", "null"]
+        closedByName:
+          type: ["string", "null"]
+        closedByInitials:
+          type: ["string", "null"]
+        closureNotes:
+          type: ["string", "null"]
+        closedAt:
+          type: ["string", "null"]
+          format: date-time
+        # ── Session 12: product context ──────────────────────────────────
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        # ── Session 12: per-phase due dates ──────────────────────────────
+        # Session 34 (Tier 2 #11) — these now auto-stamp on phase entry.
+        # investigationDueDate defaults to createdAt+30d at open; the other
+        # two stamp +15d on the Investigation→Action Planning and
+        # Action Planning→EC Planning transitions respectively.
+        investigationDueDate:
+          type: ["string", "null"]
+          format: date
+        actionPlanningDueDate:
+          type: ["string", "null"]
+          format: date
+        ecPlanningDueDate:
+          type: ["string", "null"]
+          format: date
+        # ── Session 34 (Tier 2 #10) — initial Risk classification ───────
+        # Required at CAPA open (Critical | High | Medium | Low) with a
+        # documented rationale. Can be revised during Investigation; every
+        # revision writes a RISK_REVISED audit_log entry. The four
+        # riskRevised* columns mirror the most recent revision for
+        # at-a-glance display; full history lives in audit_log.
+        riskLevel:
+          type: ["string", "null"]
+          description: "Critical | High | Medium | Low"
+        riskRationale:
+          type: ["string", "null"]
+          description: "Operator's documented reason for the current Risk Level. Required when riskLevel is set."
+        riskReleased:
+          type: ["boolean", "null"]
+          description: "Guiding prompt: was the affected lot released to customers?"
+        riskCustomerAffected:
+          type: ["boolean", "null"]
+          description: "Guiding prompt: has a customer been impacted?"
+        riskLabelingImpact:
+          type: ["boolean", "null"]
+          description: "Guiding prompt: is product labeling implicated?"
+        riskInHouseOnly:
+          type: ["boolean", "null"]
+          description: "Guiding prompt: confined to internal use, no external exposure?"
+        riskPreBulk:
+          type: ["boolean", "null"]
+          description: "Guiding prompt: caught pre-bulk, before material was committed?"
+        riskRevisedAt:
+          type: ["string", "null"]
+          format: date-time
+          description: "Server-stamped time of the most recent Risk revision."
+        riskRevisedByName:
+          type: ["string", "null"]
+          description: "Server-stamped full name of the user who last revised Risk."
+        riskRevisedReason:
+          type: ["string", "null"]
+          description: "Reason supplied with the most recent Risk revision."
+        riskRevisedFrom:
+          type: ["string", "null"]
+          description: "Previous Risk Level captured on the most recent revision."
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - capaNumber
+        - type
+        - title
+        - description
+        - stage
+        - status
+        - createdAt
+        - updatedAt
+
+    # ── CAPA Action Item (Session 4 + Session 18 aggregate endpoint) ─────
+    CapaActionItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        capaId:
+          type: integer
+        sequenceNumber:
+          type: integer
+        actionDescription:
+          type: string
+        assignedToId:
+          type: ["integer", "null"]
+        assignedToName:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        status:
+          type: string
+          description: "Open | Completed | Verified"
+        completedAt:
+          type: ["string", "null"]
+          format: date-time
+        completedById:
+          type: ["integer", "null"]
+        completedByName:
+          type: ["string", "null"]
+        verifiedAt:
+          type: ["string", "null"]
+          format: date-time
+        verifiedById:
+          type: ["integer", "null"]
+        verifiedByName:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - capaId
+        - sequenceNumber
+        - actionDescription
+        - status
+        - createdAt
+        - updatedAt
+
+    # ── Session 20 — CAPA workflow bodies ────────────────────────────────────
+    # Slim source-record summaries embedded in CapaDetail. Server returns just
+    # enough to render the "linked source" chip on the detail page.
+    CapaSourceNcRef:
+      type: object
+      properties:
+        id:
+          type: integer
+        ncNumber:
+          type: string
+        title:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+      required:
+        - id
+        - ncNumber
+        - title
+        - severity
+        - status
+
+    CapaSourceComplaintRef:
+      type: object
+      properties:
+        id:
+          type: integer
+        complaintNumber:
+          type: string
+        complaintType:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+      required:
+        - id
+        - complaintNumber
+        - complaintType
+        - severity
+        - status
+
+    # Full GET /capas/{id} payload — extends Capa with the joined sub-rows.
+    CapaDetail:
+      allOf:
+        - $ref: "#/components/schemas/Capa"
+        - type: object
+          properties:
+            actionItems:
+              type: array
+              items:
+                $ref: "#/components/schemas/CapaActionItem"
+            sourceNc:
+              oneOf:
+                - $ref: "#/components/schemas/CapaSourceNcRef"
+                - type: "null"
+            sourceComplaint:
+              oneOf:
+                - $ref: "#/components/schemas/CapaSourceComplaintRef"
+                - type: "null"
+          required:
+            - actionItems
+
+    # Whitelisted fields on POST /capas (server overlays openedBy / originator /
+    # capaNumber / stage=Initiation / status=Open).
+    CreateCapaBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          description: "Corrective | Preventive (defaults Corrective)"
+        sourceNcId:
+          type: ["integer", "null"]
+        sourceComplaintId:
+          type: ["integer", "null"]
+        rootCauseAnalysis:
+          type: ["string", "null"]
+        rcaMethod:
+          type: ["string", "null"]
+        effectivenessCriteria:
+          type: ["string", "null"]
+        effectivenessCheckDue:
+          type: ["string", "null"]
+          format: date
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        rootCauses:
+          type: ["array", "null"]
+          items:
+            type: string
+        investigationDueDate:
+          type: ["string", "null"]
+          format: date
+        actionPlanningDueDate:
+          type: ["string", "null"]
+          format: date
+        ecPlanningDueDate:
+          type: ["string", "null"]
+          format: date
+        # ── Session 34 (Tier 2 #10) — initial Risk classification ───────
+        # Server requires riskLevel + a non-empty riskRationale at open.
+        # The five booleans are optional guidance; operator's tier choice
+        # stays authoritative.
+        riskLevel:
+          type: string
+          description: "Critical | High | Medium | Low"
+        riskRationale:
+          type: string
+          description: "Required when riskLevel is set. Documents WHY this tier was chosen."
+        riskReleased:
+          type: ["boolean", "null"]
+        riskCustomerAffected:
+          type: ["boolean", "null"]
+        riskLabelingImpact:
+          type: ["boolean", "null"]
+        riskInHouseOnly:
+          type: ["boolean", "null"]
+        riskPreBulk:
+          type: ["boolean", "null"]
+      required:
+        - title
+        - description
+        - riskLevel
+        - riskRationale
+
+    # PATCH /capas/{id} — strict whitelist (see CAPA_PATCH_ALLOWED in capas.ts).
+    # Lifecycle / signature fields must use the workflow endpoints.
+    UpdateCapaBody:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        rootCauseAnalysis:
+          type: ["string", "null"]
+        rcaMethod:
+          type: ["string", "null"]
+        rcaMethods:
+          type: ["array", "null"]
+          items:
+            type: string
+        effectivenessCriteria:
+          type: ["string", "null"]
+        effectivenessCheckDue:
+          type: ["string", "null"]
+          format: date
+        originatorId:
+          type: ["integer", "null"]
+        originatorName:
+          type: ["string", "null"]
+        effectivenessOwnerId:
+          type: ["integer", "null"]
+        effectivenessOwnerName:
+          type: ["string", "null"]
+        productType:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        lotNumber:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        rootCauses:
+          type: ["array", "null"]
+          items:
+            type: string
+        investigationDueDate:
+          type: ["string", "null"]
+          format: date
+        actionPlanningDueDate:
+          type: ["string", "null"]
+          format: date
+        ecPlanningDueDate:
+          type: ["string", "null"]
+          format: date
+        # ── Session 34 (Tier 2 #10) — Risk revision in Investigation ────
+        # Any change to riskLevel must come with a riskRevisedReason in the
+        # same PATCH body. Server stamps the riskRevisedAt / riskRevisedByName
+        # / riskRevisedFrom lineage; the client cannot spoof them.
+        riskLevel:
+          type: ["string", "null"]
+          description: "Critical | High | Medium | Low"
+        riskRationale:
+          type: ["string", "null"]
+        riskReleased:
+          type: ["boolean", "null"]
+        riskCustomerAffected:
+          type: ["boolean", "null"]
+        riskLabelingImpact:
+          type: ["boolean", "null"]
+        riskInHouseOnly:
+          type: ["boolean", "null"]
+        riskPreBulk:
+          type: ["boolean", "null"]
+        riskRevisedReason:
+          type: ["string", "null"]
+          description: "Required when riskLevel is changing on an existing CAPA."
+
+    # Session 35 — Gate 0 acceptance body. Single signer, Manager/Quality/Admin.
+    Gate0ApproveBody:
+      type: object
+      properties:
+        initials:
+          type: string
+        signatureMeaning:
+          type: string
+      required:
+        - initials
+        - signatureMeaning
+
+    Gate1ApproveBody:
+      type: object
+      properties:
+        initials:
+          type: string
+        signatureMeaning:
+          type: string
+      required:
+        - initials
+        - signatureMeaning
+
+    Gate1RejectBody:
+      type: object
+      properties:
+        comment:
+          type: string
+          description: "Mandatory — captured in lastRejectionComment and audit log."
+        rollbackTarget:
+          type: string
+          description: "Investigation | Planning (defaults Investigation)"
+      required:
+        - comment
+
+    Gate2ApproveBody:
+      type: object
+      properties:
+        initials:
+          type: string
+        signatureMeaning:
+          type: string
+        outcome:
+          type: string
+          description: "Pass | Fail"
+        comment:
+          type: ["string", "null"]
+          description: "Required when outcome=Fail."
+        rollbackTarget:
+          type: ["string", "null"]
+          description: "Investigation | Planning — required when outcome=Fail."
+      required:
+        - initials
+        - signatureMeaning
+        - outcome
+
+    VerifyCapaEffectivenessBody:
+      type: object
+      properties:
+        initials:
+          type: string
+        signatureMeaning:
+          type: string
+        effectivenessOutcome:
+          type: string
+        notes:
+          type: ["string", "null"]
+      required:
+        - initials
+        - signatureMeaning
+        - effectivenessOutcome
+
+    CloseCapaBody:
+      type: object
+      properties:
+        initials:
+          type: string
+        signatureMeaning:
+          type: string
+        closureNotes:
+          type: ["string", "null"]
+      required:
+        - initials
+        - signatureMeaning
+
+    # Response shape for POST /capas/{id}/effectiveness-suggestions (Session 30).
+    # The server soft-fails to an empty array rather than erroring on backend
+    # AI failures, so `suggestions` is always present (never null).
+    CapaEffectivenessSuggestions:
+      type: object
+      properties:
+        suggestions:
+          type: array
+          items:
+            type: string
+      required:
+        - suggestions
+
+    # Whitelisted fields on POST /capas/{id}/action-items (see
+    # ACTION_ITEM_ALLOWED in capas.ts). Server stamps sequenceNumber.
+    CreateCapaActionItemBody:
+      type: object
+      properties:
+        actionDescription:
+          type: string
+        assignedToId:
+          type: ["integer", "null"]
+        assignedToName:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        notes:
+          type: ["string", "null"]
+      required:
+        - actionDescription
+
+    # PATCH on an action item. Status transitions limited to Open / In Progress /
+    # Completed. Verified must use the dedicated /verify endpoint.
+    UpdateCapaActionItemBody:
+      type: object
+      properties:
+        actionDescription:
+          type: string
+        assignedToId:
+          type: ["integer", "null"]
+        assignedToName:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        notes:
+          type: ["string", "null"]
+        status:
+          type: string
+          description: "Open | In Progress | Completed"
+
+    VerifyCapaActionItemBody:
+      type: object
+      properties:
+        initials:
+          type: string
+        meaning:
+          type: string
+          description: "Server also accepts the legacy alias signatureMeaning."
+        signatureMeaning:
+          type: ["string", "null"]
+          description: "Legacy alias for meaning."
+        notes:
+          type: ["string", "null"]
+      required:
+        - initials
+
+    # Session 37 (Tier 3 #15) — Operations testing aggregates.
+    DashboardTestingMetrics:
+      type: object
+      properties:
+        windowDays:
+          type: integer
+          description: "Window size used for pass/fail/turnaround. Defaults to 90 server-side."
+        passCount:
+          type: integer
+          description: "batch_testing rows with testResult='Pass' and resultDate within the window."
+        failCount:
+          type: integer
+          description: "batch_testing rows with testResult='Fail' and resultDate within the window."
+        pendingCount:
+          type: integer
+          description: "batch_testing rows still in testResult='Pending'. Unwindowed — operators want the full backlog."
+        avgTurnaroundDays:
+          type: ["number", "null"]
+          description: "Average days from sample-pull (samplePulledAt; falls back to legacy submittedDate) to resultDate over rows that completed in the window. Null when no completions in window."
+      required:
+        - windowDays
+        - passCount
+        - failCount
+        - pendingCount
+
+    OpenItemsDetail:
+      type: object
+      properties:
+        nonConformances:
+          type: array
+          items:
+            $ref: "#/components/schemas/NonConformance"
+        complaints:
+          type: array
+          items:
+            $ref: "#/components/schemas/Complaint"
+        fieldActions:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldAction"
+        capas:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapaDashboardItem"
+        newAdverseEvents:
+          type: array
+          items:
+            $ref: "#/components/schemas/Complaint"
+        newNCs:
+          type: array
+          items:
+            $ref: "#/components/schemas/NonConformance"
+      required:
+        - nonConformances
+        - complaints
+        - fieldActions
+        - capas
+        - newAdverseEvents
+        - newNCs
+
+    SupplierQualification:
+      type: object
+      properties:
+        id:
+          type: integer
+        qualNumber:
+          type: string
+        supplierId:
+          type: integer
+        supplierName:
+          type: string
+        supplierType:
+          type: string
+        qualificationType:
+          type: string
+          description: "Initial Qualification | Annual Re-qualification | For-Cause Review | Renewal | Desk Audit | On-Site Audit"
+        riskLevel:
+          type: string
+          description: "Low | Medium | High | Critical"
+        status:
+          type: string
+          description: "Scheduled | In Progress | Passed | Failed | Pending Review | Expired"
+        assessorName:
+          type: ["string", "null"]
+        assessmentDate:
+          type: ["string", "null"]
+          format: date
+        expiryDate:
+          type: ["string", "null"]
+          format: date
+        score:
+          type: ["integer", "null"]
+        findings:
+          type: ["string", "null"]
+        correctiveActionsRequired:
+          type: ["string", "null"]
+        approvedByName:
+          type: ["string", "null"]
+        approvalDate:
+          type: ["string", "null"]
+          format: date
+        notes:
+          type: ["string", "null"]
+        createdByName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - qualNumber
+        - supplierId
+        - supplierName
+        - supplierType
+        - qualificationType
+        - riskLevel
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateSupplierQualBody:
+      type: object
+      properties:
+        supplierId:
+          type: integer
+        qualificationType:
+          type: string
+        riskLevel:
+          type: string
+        assessorName:
+          type: string
+        assessmentDate:
+          type: string
+          format: date
+        expiryDate:
+          type: string
+          format: date
+        notes:
+          type: string
+        createdByName:
+          type: string
+      required:
+        - supplierId
+        - qualificationType
+        - riskLevel
+
+    UpdateSupplierQualBody:
+      type: object
+      properties:
+        status:
+          type: string
+        riskLevel:
+          type: string
+        assessorName:
+          type: string
+        assessmentDate:
+          type: string
+          format: date
+        expiryDate:
+          type: string
+          format: date
+        score:
+          type: integer
+        findings:
+          type: string
+        correctiveActionsRequired:
+          type: string
+        approvedByName:
+          type: string
+        approvalDate:
+          type: string
+          format: date
+        notes:
+          type: string
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+        docNumber:
+          type: string
+        title:
+          type: string
+        documentType:
+          type: string
+        revision:
+          type: string
+        status:
+          type: string
+          description: "Draft | Under Review | Approved | Obsolete | Superseded"
+        ownerName:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        scope:
+          type: ["string", "null"]
+        effectiveDate:
+          type: ["string", "null"]
+          format: date
+        reviewDate:
+          type: ["string", "null"]
+          format: date
+        approvedByName:
+          type: ["string", "null"]
+        approvalDate:
+          type: ["string", "null"]
+          format: date
+        summaryOfChanges:
+          type: ["string", "null"]
+        createdByName:
+          type: ["string", "null"]
+        assignedReviewerId:
+          type: ["integer", "null"]
+        assignedReviewerName:
+          type: ["string", "null"]
+        assignedApproverId:
+          type: ["integer", "null"]
+        assignedApproverName:
+          type: ["string", "null"]
+        reviewerSignedAt:
+          type: ["string", "null"]
+          format: date-time
+        reviewerSignedName:
+          type: ["string", "null"]
+        reviewerSignedInitials:
+          type: ["string", "null"]
+        reviewerSignedMeaning:
+          type: ["string", "null"]
+        approverSignedAt:
+          type: ["string", "null"]
+          format: date-time
+        approverSignedInitials:
+          type: ["string", "null"]
+        approverSignedMeaning:
+          type: ["string", "null"]
+        reviewIntervalYears:
+          type: integer
+        nextReviewDate:
+          type: ["string", "null"]
+          format: date
+        obsoletedAt:
+          type: ["string", "null"]
+          format: date-time
+        obsoletedByName:
+          type: ["string", "null"]
+        obsoletedMeaning:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - docNumber
+        - title
+        - documentType
+        - revision
+        - status
+        - reviewIntervalYears
+        - createdAt
+        - updatedAt
+
+    DocumentRevision:
+      type: object
+      properties:
+        id:
+          type: integer
+        documentId:
+          type: integer
+        revision:
+          type: string
+        status:
+          type: string
+        summaryOfChanges:
+          type: ["string", "null"]
+        authorName:
+          type: ["string", "null"]
+        reviewerName:
+          type: ["string", "null"]
+        reviewerSignedAt:
+          type: ["string", "null"]
+          format: date-time
+        approvedByName:
+          type: ["string", "null"]
+        approvalDate:
+          type: ["string", "null"]
+          format: date
+        effectiveDate:
+          type: ["string", "null"]
+          format: date
+        obsoletedAt:
+          type: ["string", "null"]
+          format: date-time
+        obsoletedByName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - documentId
+        - revision
+        - status
+        - createdAt
+
+    DocumentWithRevisions:
+      allOf:
+        - $ref: "#/components/schemas/Document"
+        - type: object
+          properties:
+            revisions:
+              type: array
+              items:
+                $ref: "#/components/schemas/DocumentRevision"
+          required:
+            - revisions
+
+    CreateDocumentBody:
+      type: object
+      properties:
+        title:
+          type: string
+        documentType:
+          type: string
+        department:
+          type: string
+        ownerName:
+          type: string
+        description:
+          type: string
+        scope:
+          type: string
+        reviewDate:
+          type: string
+          format: date
+        createdByName:
+          type: string
+      required:
+        - title
+        - documentType
+
+    UpdateDocumentBody:
+      type: object
+      properties:
+        title:
+          type: ["string", "null"]
+        status:
+          type: ["string", "null"]
+        revision:
+          type: ["string", "null"]
+        ownerName:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        scope:
+          type: ["string", "null"]
+        effectiveDate:
+          type: ["string", "null"]
+          format: date
+        reviewDate:
+          type: ["string", "null"]
+          format: date
+        approvedByName:
+          type: ["string", "null"]
+        approvalDate:
+          type: ["string", "null"]
+          format: date
+        summaryOfChanges:
+          type: ["string", "null"]
+        reviewIntervalYears:
+          type: integer
+
+    RequestReviewBody:
+      type: object
+      description: Signer identity is derived from the authenticated session.
+      properties:
+        reviewerId:
+          type: integer
+        approverId:
+          type: integer
+      required:
+        - reviewerId
+        - approverId
+
+    SignDocumentBody:
+      type: object
+      description: Signer identity is derived from the authenticated session.
+      properties:
+        initials:
+          type: string
+        meaning:
+          type: string
+      required:
+        - initials
+        - meaning
+
+    ApproveDocumentBody:
+      type: object
+      description: Signer identity is derived from the authenticated session.
+      properties:
+        initials:
+          type: string
+        meaning:
+          type: string
+        effectiveDate:
+          type: ["string", "null"]
+          format: date
+      required:
+        - initials
+        - meaning
+
+    NewRevisionBody:
+      type: object
+      properties:
+        newRevision:
+          type: string
+        summaryOfChanges:
+          type: ["string", "null"]
+      required:
+        - newRevision
+
+    TrainingRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        recordNumber:
+          type: string
+        employeeName:
+          type: string
+        employeeId:
+          type: ["string", "null"]
+        department:
+          type: ["string", "null"]
+        trainingType:
+          type: string
+        topic:
+          type: string
+        description:
+          type: ["string", "null"]
+        documentReference:
+          type: ["string", "null"]
+        trainerName:
+          type: ["string", "null"]
+        assignedDate:
+          type: string
+          format: date
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        completedDate:
+          type: ["string", "null"]
+          format: date
+        status:
+          type: string
+          description: "Assigned | In Progress | Completed | Overdue | Waived"
+        score:
+          type: ["integer", "null"]
+        passingScore:
+          type: ["integer", "null"]
+        notes:
+          type: ["string", "null"]
+        createdByName:
+          type: ["string", "null"]
+        assignedToUserId:
+          type: ["integer", "null"]
+        documentId:
+          type: ["integer", "null"]
+        documentRevisionSnapshot:
+          type: ["string", "null"]
+        acknowledgmentText:
+          type: ["string", "null"]
+        signedInitials:
+          type: ["string", "null"]
+        signedMeaning:
+          type: ["string", "null"]
+        signedAt:
+          type: ["string", "null"]
+          format: date-time
+        signedByUserId:
+          type: ["integer", "null"]
+        signedByFullName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - recordNumber
+        - employeeName
+        - trainingType
+        - topic
+        - assignedDate
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateTrainingBody:
+      type: object
+      properties:
+        employeeName:
+          type: string
+        employeeId:
+          type: string
+        department:
+          type: string
+        trainingType:
+          type: string
+        topic:
+          type: string
+        description:
+          type: string
+        documentReference:
+          type: string
+        trainerName:
+          type: string
+        assignedDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        createdByName:
+          type: string
+      required:
+        - employeeName
+        - trainingType
+        - topic
+        - assignedDate
+
+    UpdateTrainingBody:
+      type: object
+      properties:
+        status:
+          type: string
+        completedDate:
+          type: string
+          format: date
+        score:
+          type: integer
+        passingScore:
+          type: integer
+        notes:
+          type: string
+        description:
+          type: string
+        documentReference:
+          type: string
+        trainerName:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        employeeName:
+          type: string
+        department:
+          type: string
+        trainingType:
+          type: string
+        topic:
+          type: string
+
+    TrainingStats:
+      type: object
+      properties:
+        total:
+          type: integer
+        completed:
+          type: integer
+        overdue:
+          type: integer
+        cancelled:
+          type: integer
+        onTimeCompleted:
+          type: integer
+        completedWithDeadline:
+          type: integer
+      required:
+        - total
+        - completed
+        - overdue
