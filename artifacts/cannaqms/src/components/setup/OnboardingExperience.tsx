@@ -80,6 +80,7 @@ const TIME_ZONES = [
 ];
 
 export type OnboardingExperienceProps = {
+  returnToRequestedPage?: boolean;
   snapshot: OnboardingSnapshot;
   draft: OnboardingDraft;
   saveStatus: "saved" | "saving" | "unsaved" | "error";
@@ -732,7 +733,9 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
                 <div className="cq-step-body">
                   <p className="cq-lead">
                     Confirm the identity, facility, and preferences below.
-                    Activating this setup opens your chosen workflow.
+                    {props.returnToRequestedPage
+                      ? " After setup, you’ll return to the page you opened. Your starting workflow is also available from the dashboard."
+                      : " Activating this setup opens your chosen workflow."}
                   </p>
                   <dl className="cq-review">
                     <div>
@@ -795,7 +798,11 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
                     </div>
                   </dl>
                   <div className="cq-next-path">
-                    <span className="cq-eyebrow">OPEN AFTER SETUP</span>
+                    <span className="cq-eyebrow">
+                      {props.returnToRequestedPage
+                        ? "YOUR STARTING WORKFLOW"
+                        : "OPEN AFTER SETUP"}
+                    </span>
                     <h2>{selectedPath.title}</h2>
                     <p>{selectedPath.description}</p>
                   </div>

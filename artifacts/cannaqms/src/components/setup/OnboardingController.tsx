@@ -7,6 +7,7 @@ import {
   usePreferences,
 } from "@/lib/onboarding";
 type Props = {
+  returnToRequestedPage?: boolean;
   request?: typeof onboardingRequest;
   initial: OnboardingSnapshot;
   onFinished: (snapshot: OnboardingSnapshot) => void;
@@ -16,6 +17,7 @@ type Props = {
 
 // Serialize writes and flush edits entered while an earlier save was in flight.
 export function OnboardingController({
+  returnToRequestedPage,
   initial,
   onFinished,
   onDeferred,
@@ -134,6 +136,7 @@ export function OnboardingController({
   }
   return (
     <OnboardingExperience
+      returnToRequestedPage={returnToRequestedPage}
       snapshot={snapshot}
       draft={draft}
       saveStatus={status}

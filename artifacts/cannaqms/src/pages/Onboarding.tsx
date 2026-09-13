@@ -46,6 +46,11 @@ export default function Onboarding() {
     );
   return (
     <OnboardingController
+      returnToRequestedPage={
+        !!workspaceReturnTo(
+          new URLSearchParams(window.location.search).get("returnTo"),
+        )
+      }
       key={data.user.id}
       initial={data}
       onFinished={(next) =>
