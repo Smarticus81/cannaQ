@@ -16,7 +16,7 @@ locally. All Clerk keys must belong to the same instance.
 ```sh
 pnpm install --frozen-lockfile
 pnpm check:env
-pnpm db:push
+pnpm db:migrate
 pnpm build
 pnpm start
 ```
@@ -25,6 +25,8 @@ Open `http://localhost:3001`. Set `BOOTSTRAP_ADMIN_EMAILS` to the initial
 administrator's email before their first sign-in. Configure the company,
 facilities, people, and regulatory settings in the application.
 
+Use `db:migrate` on a fresh database. Existing databases provisioned before
+versioned migrations need a reviewed baseline; see [deployment](docs/RAILWAY_DEPLOYMENT.md).
 `db:push` is an explicit schema operation: review its proposed changes before
 accepting them on an existing database. Startup applies the existing idempotent
 schema additions and audit triggers; it does not run `drizzle-kit push --force`.
@@ -58,7 +60,8 @@ certify every business workflow or external integration. See
 [the review](docs/CODEBASE_REVIEW.md) and [requirements](docs/REQUIREMENTS.md)
 for the remaining functional validation work.
 
-`GET /api/healthz` is public. All business API routes require an active user;
+`GET /health`, `/api/health`, and `/api/healthz` are public and return 200 only
+after bootstrap succeeds. All business API routes require an active user;
 individual routes retain their role/signature checks. Uploads are stored in
 PostgreSQL. AI assistance and email require their optional credentials. Metrc
 writes stay disabled unless `METRC_WRITE_ENABLED=true`; use sandbox credentials
@@ -71,6 +74,8 @@ for testing and retain each route's preview/confirmation requirements.
 | `artifacts/cannaqms` | React/Vite frontend |
 | `artifacts/api-server` | Express API, domain rules, integration clients |
 | `lib/db` | Drizzle schema and request-scoped database access |
+| `lib/db/migrations` | Versioned base schema and subsequent database migrations |
+| `.railway/railway.ts` | Single-service production deployment configuration |
 | `lib/api-spec` | OpenAPI source and generation configuration |
 | `lib/api-client-react`, `lib/api-zod` | Generated client and validation contracts |
 | `lib/integrations-anthropic-ai` | Lazy AI client |

@@ -7,7 +7,6 @@ import { clerkMiddleware } from "@clerk/express";
 import {
   CLERK_PROXY_PATH,
   clerkProxyMiddleware,
-  getClerkProxyHost,
 } from "./middlewares/clerkProxyMiddleware";
 import router from "./routes";
 import { facilityContext } from "./middlewares/facilityContext";
@@ -48,6 +47,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", healthRouter);
+app.use(healthRouter);
 app.use(clerkMiddleware());
 
 // Multi-facility Phase 2 — every API request announces the facility it is acting
@@ -67,7 +67,7 @@ app.use("/api", facilityContext(), router);
 // side router paths fall back to index.html. Logged at startup so the
 // container's behavior is obvious from the runtime logs.
 const cannaqmsDist = path.resolve(import.meta.dirname, "..", "..", "cannaqms", "dist", "public");
-if (existsSync(cannaqmsDist)) {
+if (existsSync(path.join(cannaqmsDist, "index.html"))) {
   logger.info({ cannaqmsDist }, "Serving cannaqms SPA from api-server");
   app.use(express.static(cannaqmsDist));
   // Session 42 (round 7) — terminal middleware instead of `app.get("*", ...)`.
@@ -82,6 +82,9 @@ if (existsSync(cannaqmsDist)) {
     res.sendFile(path.join(cannaqmsDist, "index.html"));
   });
 } else {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Production SPA is missing. Build the entire workspace with pnpm build:prod before starting the API.");
+  }
   logger.warn({ cannaqmsDist }, "cannaqms dist not found — SPA will not be served by api-server");
 }
 

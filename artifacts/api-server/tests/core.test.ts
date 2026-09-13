@@ -83,8 +83,8 @@ test("the real application protects business routes without contacting a databas
   const base = `http://127.0.0.1:${address.port}`;
   try {
     const health = await fetch(`${base}/api/healthz`);
-    assert.equal(health.status, 200);
-    assert.deepEqual(await health.json(), { status: "ok" });
+    assert.equal(health.status, 503, "importing the app alone does not complete bootstrap");
+    assert.deepEqual(await health.json(), { status: "starting" });
     for (const route of ["suppliers", "batch-records", "inventory", "documents", "audit-log", "facilities"]) {
       assert.equal((await fetch(`${base}/api/${route}`)).status, 401, route);
     }

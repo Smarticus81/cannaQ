@@ -2250,6 +2250,10 @@ END $do$;
 `;
 
 export async function ensureSchema(): Promise<void> {
+  const base = await pool.query("SELECT to_regclass('public.users') AS users_table");
+  if (!base.rows[0]?.users_table) {
+    throw new Error("Base database schema is missing. Run pnpm db:migrate before starting the application (Railway pre-deploy command).");
+  }
   await pool.query(ONBOARDING_SCHEMA_SQL);
   await pool.query(SCHEMA_SQL);
   logger.info("ensureSchema: idempotent schema applied");

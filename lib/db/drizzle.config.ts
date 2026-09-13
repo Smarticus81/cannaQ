@@ -18,6 +18,7 @@ export default defineConfig({
   // path.join(__dirname, …) produced Windows backslashes the globber couldn't match
   // ("No schema files found"), which blocked `push` from a Windows shell.
   schema: "./src/schema/index.ts",
+  out: "./migrations",
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,

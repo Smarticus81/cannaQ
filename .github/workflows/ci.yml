@@ -18,3 +18,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm test
+  fresh-database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: cannaq_test
+          POSTGRES_PASSWORD: test_only
+          POSTGRES_DB: cannaq_bootstrap
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cannaq_test -d cannaq_bootstrap"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      VITE_CLERK_PUBLISHABLE_KEY: pk_test_dGVzdC5jbGVyay5hY2NvdW50cy5kZXYk
+      TEST_DATABASE_URL: postgresql://cannaq_test:test_only@127.0.0.1:5432/cannaq_bootstrap
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:prod
+      - run: pnpm test:bootstrap

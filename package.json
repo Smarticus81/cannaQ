@@ -4,8 +4,9 @@
   "license": "MIT",
   "packageManager": "pnpm@10.16.0",
   "scripts": {
+    "test:bootstrap": "node lib/db/scripts/check-bootstrap.mjs",
     "check:env": "node --env-file-if-exists=.env scripts/check-env.mjs",
-    "test": "pnpm --filter @workspace/scripts exec tsx --test ../artifacts/api-server/tests/core.test.ts ../artifacts/api-server/tests/onboarding.test.ts",
+    "test": "pnpm --filter @workspace/scripts exec tsx --test ../artifacts/api-server/tests/core.test.ts ../artifacts/api-server/tests/onboarding.test.ts ../artifacts/api-server/tests/startup.test.ts",
     "preinstall": "node scripts/check-package-manager.mjs",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "start": "pnpm --filter @workspace/api-server start",
@@ -13,11 +14,16 @@
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
     "dev:api": "pnpm --filter @workspace/api-server dev",
     "dev:web": "pnpm --filter @workspace/cannaqms dev",
-    "db:push": "pnpm --filter @workspace/db push"
+    "db:push": "pnpm --filter @workspace/db push",
+    "build:prod": "node scripts/build-production.mjs",
+    "db:migrate": "pnpm --filter @workspace/db db:migrate",
+    "railway:plan": "pnpm dlx @railway/cli@5.54.0 config plan",
+    "railway:apply": "pnpm dlx @railway/cli@5.54.0 config apply"
   },
   "private": true,
   "devDependencies": {
     "prettier": "^3.9.6",
+    "railway": "3.11.0",
     "typescript": "~5.9.3"
   },
   "engines": {
