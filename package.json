@@ -15,7 +15,7 @@
     "dev:api": "pnpm --filter @workspace/api-server dev",
     "dev:web": "pnpm --filter @workspace/cannaqms dev",
     "db:push": "pnpm --filter @workspace/db push",
-    "build:prod": "node scripts/build-production.mjs",
+    "build:prod": "node scripts/check-production-build-env.mjs && pnpm run build",
     "db:migrate": "pnpm --filter @workspace/db db:migrate",
     "railway:plan": "pnpm dlx @railway/cli@5.54.0 config plan",
     "railway:apply": "pnpm dlx @railway/cli@5.54.0 config apply"
