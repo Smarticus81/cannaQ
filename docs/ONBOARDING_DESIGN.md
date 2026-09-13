@@ -94,6 +94,31 @@ unrequested AI, emotional inference, or voice functionality.
 
 ## Remaining verification
 
+### 13 September deployment and recovery checks
+
+The combined application is deployed on Railway. Its fresh PostgreSQL migration,
+startup schema updates, public readiness check, SPA routes and assets passed.
+The real Clerk sign-in screen renders on the deployed domain. GitHub's Windows,
+Linux and fresh-PostgreSQL checks passed for deployment commit `d053610`.
+
+The onboarding loading boundary now distinguishes an inactive account (403), an
+expired/unverified session (401), and a temporary connection error. It offers
+administrator guidance, sign-out/sign-in, or retry as appropriate. Authorization
+errors are not retried automatically. A temporary background load failure does
+not replace an existing onboarding controller and its edits with a loading page.
+
+Browser checks exercised the shared recovery screen: inactive-account sign-out,
+expired-session sign-in action, a failed-load retry that restored the actual
+SQL-backed preview, and disabled controls while that retry was pending. The
+320px dark rendering was reviewed with reduced motion enabled; no horizontal
+overflow or browser exceptions occurred. Production build/typecheck and all
+12 regression tests passed. Review the recovery variants locally at
+`/tests/onboarding.html?scenario=inactive` and `?scenario=expired`.
+
+These recovery actions use the isolated review callbacks; they do not prove
+real Clerk sign-out or authenticated onboarding. A live onboarding tab has been
+opened for the user to sign in. The authenticated journey remains unverified.
+
 Clerk email verification is pending in the real application tab. Full signed-in
 browser journeys on the copied database and live Metrc connectivity remain
 outstanding. Upload transport is verified; the signed-in attachment UI still

@@ -6,8 +6,10 @@ import type { OnboardingSnapshot } from "@workspace/api-zod/onboarding";
 import { OnboardingController } from "@/components/setup/OnboardingController";
 import { onboardingKey, useOnboarding } from "@/lib/onboarding";
 import { BrandMark } from "@/components/BrandMark";
+import { OnboardingUnavailable } from "@/components/setup/OnboardingUnavailable";
+import { onboardingAccessStatus } from "@/lib/onboarding-errors";
 export default function Onboarding() {
-  const { data, isError, refetch } = useOnboarding();
+  const { data, isError, error, isFetching, refetch } = useOnboarding();
   const client = useQueryClient();
   const [, navigate] = useLocation();
   const { signOut } = useClerk();
@@ -16,21 +18,21 @@ export default function Onboarding() {
     void client.invalidateQueries({ queryKey: ["me"] });
     navigate(destination);
   };
+  if (isError && (!data || onboardingAccessStatus(error)))
+    return (
+      <OnboardingUnavailable
+        error={error}
+        retrying={isFetching}
+        onRetry={() => void refetch()}
+        onSignOut={() => signOut({ redirectUrl: "/sign-in" })}
+      />
+    );
   if (!data)
     return (
       <main className="cq-loading">
         <BrandMark />
-        <h1>{isError ? "Let's reconnect." : "Loading workspace setup."}</h1>
-        <p role="status">
-          {isError
-            ? "Your setup couldn't be loaded. Please try again."
-            : "Loading your saved place…"}
-        </p>
-        {isError && (
-          <button className="cq-action" onClick={() => void refetch()}>
-            Try again
-          </button>
-        )}
+        <h1>Loading workspace setup.</h1>
+        <p role="status">Loading your saved place…</p>
       </main>
     );
   return (

@@ -1,26 +1,27 @@
 import type { PropsWithChildren } from "react";
-import { useAuth } from "@clerk/react";
+import { useAuth, useClerk } from "@clerk/react";
 import { Redirect, useLocation } from "wouter";
 import { useOnboarding, usePreferences } from "@/lib/onboarding";
+import { OnboardingUnavailable } from "./OnboardingUnavailable";
 export function OnboardingGate({ children }: PropsWithChildren) {
   const [location] = useLocation();
   const { isSignedIn } = useAuth();
+  const { signOut } = useClerk();
   const publicRoute = location === "/" || location.startsWith("/sign-");
   const introduction = location === "/onboarding";
-  const { data, isError, refetch } = useOnboarding(
+  const { data, isError, error, isFetching, refetch } = useOnboarding(
     !!isSignedIn && !publicRoute,
   );
   usePreferences(introduction ? undefined : data?.draft);
   if (publicRoute || introduction || !isSignedIn) return children;
   if (isError)
     return (
-      <main className="cq-loading">
-        <h1>Let's reconnect.</h1>
-        <p>We couldn't check your workspace access.</p>
-        <button className="cq-action" onClick={() => void refetch()}>
-          Try again
-        </button>
-      </main>
+      <OnboardingUnavailable
+        error={error}
+        retrying={isFetching}
+        onRetry={() => void refetch()}
+        onSignOut={() => signOut({ redirectUrl: "/sign-in" })}
+      />
     );
   if (!data)
     return (

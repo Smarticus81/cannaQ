@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import { Router } from "wouter";
 import { OnboardingController } from "../src/components/setup/OnboardingController";
+import { OnboardingUnavailable } from "../src/components/setup/OnboardingUnavailable";
 import { onboardingRequest } from "../src/lib/onboarding";
 import type { OnboardingSnapshot } from "@workspace/api-zod";
 import "../src/index.css";
@@ -17,13 +18,39 @@ const reviewRequest: typeof onboardingRequest = (method, suffix, body) =>
 function Preview() {
   const [data, setData] = useState<OnboardingSnapshot>();
   const [done, setDone] = useState(false);
-  const [error, setError] = useState("");
-  useEffect(() => {
+  const [error, setError] = useState<unknown>();
+  const [retrying, setRetrying] = useState(false);
+  const [signedOut, setSignedOut] = useState(false);
+  const reload = () => {
+    setRetrying(true);
     void reviewRequest()
-      .then(setData)
-      .catch((e) => setError(e.message));
+      .then((next) => {
+        setData(next);
+        setError(undefined);
+      })
+      .catch(setError)
+      .finally(() => setRetrying(false));
+  };
+  useEffect(() => {
+    void reviewRequest().then(setData).catch(setError);
   }, []);
-  if (error) return <p role="alert">{error}</p>;
+  if (signedOut)
+    return (
+      <main className="cq-loading">
+        <h1>Signed out of the review.</h1>
+      </main>
+    );
+  if (error || scenario === "expired" || scenario === "inactive")
+    return (
+      <OnboardingUnavailable
+        error={error ?? { status: scenario === "expired" ? 401 : 403 }}
+        retrying={retrying}
+        onRetry={reload}
+        onSignOut={async () => {
+          setSignedOut(true);
+        }}
+      />
+    );
   if (!data) return <p>Loading isolated review database…</p>;
   if (done)
     return (

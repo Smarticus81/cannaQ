@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { OnboardingDraft, OnboardingSnapshot } from "@workspace/api-zod";
+import { onboardingAccessStatus } from "./onboarding-errors";
 export const onboardingKey = ["personal-onboarding"];
 export class OnboardingRequestError extends Error {
   constructor(
@@ -38,7 +39,8 @@ export function useOnboarding(enabled = true) {
     queryFn: () => onboardingRequest(),
     enabled,
     staleTime: 60_000,
-    retry: 1,
+    retry: (failureCount, error) =>
+      !onboardingAccessStatus(error) && failureCount < 1,
   });
 }
 export function applyPreferences(
