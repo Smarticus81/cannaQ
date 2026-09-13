@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import {
   useGetCompanyProfile,
   useUpdateCompanyProfile,
@@ -2509,7 +2508,7 @@ function SubtypeManager({ productType }: { productType: string }) {
 
 export default function Settings() {
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-5xl mx-auto pb-12">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
@@ -2519,7 +2518,7 @@ export default function Settings() {
         </div>
 
         <Tabs defaultValue="users">
-          <TabsList className="mb-6">
+          <TabsList className="mb-6 h-auto max-w-full flex-wrap justify-start">
             <TabsTrigger value="users" className="gap-2">
               <Users className="h-4 w-4" />
               User Management
@@ -2566,6 +2565,6 @@ export default function Settings() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppLayout>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import { useClerk } from "@clerk/react";
 import { useQueryClient } from "@tanstack/react-query";
+import { facilityDestination, workspaceReturnTo } from "@/lib/navigation";
 import { useLocation } from "wouter";
 import { onboardingPaths } from "@workspace/api-zod/onboarding-paths";
 import type { OnboardingSnapshot } from "@workspace/api-zod/onboarding";
@@ -14,9 +15,17 @@ export default function Onboarding() {
   const [, navigate] = useLocation();
   const { signOut } = useClerk();
   const finish = (snapshot: OnboardingSnapshot, destination: string) => {
+    const facilityChanged = snapshot.facility?.id !== data?.facility?.id;
+    if (facilityChanged) client.clear();
     client.setQueryData(onboardingKey, snapshot);
     void client.invalidateQueries({ queryKey: ["me"] });
-    navigate(destination);
+    const returnTo = workspaceReturnTo(
+      new URLSearchParams(window.location.search).get("returnTo"),
+    );
+    const target = returnTo ?? destination;
+    navigate(facilityChanged ? facilityDestination(target) : target, {
+      replace: true,
+    });
   };
   if (isError && (!data || onboardingAccessStatus(error)))
     return (
@@ -43,7 +52,7 @@ export default function Onboarding() {
         finish(next, onboardingPaths[next.draft.focus].href)
       }
       onDeferred={(next) => finish(next, "/dashboard")}
-      onExit={() => void signOut({ redirectUrl: "/" })}
+      onExit={() => signOut({ redirectUrl: import.meta.env.BASE_URL })}
     />
   );
 }

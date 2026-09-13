@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListDocuments, getListDocumentsQueryKey } from "@workspace/api-client-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -125,9 +124,9 @@ export default function Documents() {
   const tableLoading = view === "cancelled" ? cancelledLoading : isLoading;
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="cq-page-heading flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Document Control</h1>
             <p className="text-sm text-muted-foreground mt-1">
@@ -322,6 +321,6 @@ export default function Documents() {
           </Table>
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }

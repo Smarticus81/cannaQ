@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "wouter";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListUsers, useGetCurrentUser } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -128,10 +127,10 @@ export default function ManagementReviewRecord() {
     await load();
   }
 
-  if (loading) return <AppLayout><div className="p-6 text-sm text-muted-foreground">Loading…</div></AppLayout>;
+  if (loading) return <><div className="p-6 text-sm text-muted-foreground">Loading…</div></>;
 
   return (
-    <AppLayout>
+    <>
       <div className="max-w-4xl mx-auto space-y-4 p-1">
         <div className="flex items-center justify-between print:hidden">
           <Link href="/management-review" className="text-sm text-primary hover:underline inline-flex items-center gap-1"><ArrowLeft className="h-4 w-4" /> Back to Management Review</Link>
@@ -262,7 +261,7 @@ export default function ManagementReviewRecord() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </>
   );
 }
 

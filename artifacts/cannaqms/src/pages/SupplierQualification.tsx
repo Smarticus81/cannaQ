@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListSupplierQualifications } from "@workspace/api-client-react";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -103,9 +102,9 @@ export default function SupplierQualification() {
   }, [quals, filter, search]);
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="cq-page-heading flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Supplier Approval &amp; Certificates</h1>
             <p className="text-sm text-muted-foreground mt-1">
@@ -255,6 +254,6 @@ export default function SupplierQualification() {
           </Table>
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }

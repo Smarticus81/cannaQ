@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import {
   useGetPackagingDesign,
   useUpdatePackagingDesign,
@@ -407,7 +406,7 @@ export default function PackagingDetail(props: { params?: { id: string } }) {
   };
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-5xl mx-auto pb-12 print:max-w-none">
 
         {/* ── Header ── */}
@@ -418,7 +417,7 @@ export default function PackagingDetail(props: { params?: { id: string } }) {
           >
             &larr; Back to Packaging
           </Link>
-          <div className="flex items-start justify-between gap-4">
+          <div className="cq-page-heading flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
                 {isLoading ? (
@@ -1495,6 +1494,6 @@ export default function PackagingDetail(props: { params?: { id: string } }) {
         onSign={handleSign}
         isPending={false}
       />
-    </AppLayout>
+    </>
   );
 }

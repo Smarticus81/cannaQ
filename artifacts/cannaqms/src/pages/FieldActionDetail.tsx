@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { SiteBadge } from "@/components/FacilitySite";
 import {
   useGetFieldAction,
@@ -554,7 +553,7 @@ export default function FieldActionDetail(props: { params?: { id: string } }) {
   };
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-5xl mx-auto pb-12 print:max-w-none">
 
         {/* ── Header ── */}
@@ -565,7 +564,7 @@ export default function FieldActionDetail(props: { params?: { id: string } }) {
           >
             &larr; Back to Field Actions
           </Link>
-          <div className="flex items-start justify-between gap-4">
+          <div className="cq-page-heading flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
                 {isLoading ? (
@@ -1771,6 +1770,6 @@ export default function FieldActionDetail(props: { params?: { id: string } }) {
         noticeText="Recall or administrative-hold product must have CRA approval before destruction — notify CRA-Info@michigan.gov first (CRA Best Practice Guide). Each destroyed package must be logged with its full METRC tag."
         onCreated={() => { setDestructionOpen(false); toast({ title: "Destruction record created" }); }}
       />
-    </AppLayout>
+    </>
   );
 }

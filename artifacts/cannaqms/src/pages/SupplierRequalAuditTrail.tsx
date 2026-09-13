@@ -1,5 +1,4 @@
 import { useState, useMemo, useCallback } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListAuditLog } from "@workspace/api-client-react";
 import type { AuditLogEntry } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -379,13 +378,13 @@ export default function SupplierRequalAuditTrail() {
   }, [reportParams]);
 
   return (
-    <AppLayout>
+    <>
       <div className="max-w-5xl mx-auto pb-16 print:max-w-none">
 
         {/* ── PRINT-ONLY HEADER ──────────────────────────────────────────────── */}
         <div className="hidden print:block mb-6">
           <div className="border-b-4 border-black pb-4 mb-4">
-            <div className="flex items-start justify-between">
+            <div className="cq-page-heading flex items-start justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-1">
                   CannaQ · Michigan Licensed Cannabis Processor
@@ -430,7 +429,7 @@ export default function SupplierRequalAuditTrail() {
             <Link href="/audit-log" className="text-sm text-primary hover:underline mb-2 block">
               ← Back to Audit Log
             </Link>
-            <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="cq-page-heading flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
                   <Truck className="h-6 w-6 text-indigo-500" />
@@ -637,6 +636,6 @@ export default function SupplierRequalAuditTrail() {
         )}
 
       </div>
-    </AppLayout>
+    </>
   );
 }

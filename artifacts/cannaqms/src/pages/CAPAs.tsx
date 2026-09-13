@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Link } from "wouter";
 import { TermTip } from "@/components/ui/TermTip";
 import { Button } from "@/components/ui/button";
@@ -228,10 +227,10 @@ export default function CAPAs() {
   );
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-6xl mx-auto pb-12">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="cq-page-heading flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
               <TermTip term="capa">CAPA</TermTip>
@@ -364,6 +363,6 @@ export default function CAPAs() {
           </table>
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }

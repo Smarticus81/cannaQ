@@ -1,5 +1,7 @@
 import { BrandMark, RecordMark } from "@/components/BrandMark";
 import { useState, useRef, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { onboardingDestination } from "@/lib/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { UserButton, useClerk } from "@clerk/react";
@@ -92,7 +94,7 @@ const NAV_SECTIONS: NavSection[] = [
     heading: "Receiving & Production",
     items: [
       {
-        name: "Inspections",
+        name: "Incoming Inspections",
         href: "/inspections",
         icon: ClipboardCheck,
         description:
@@ -207,7 +209,7 @@ const NAV_SECTIONS: NavSection[] = [
           "Approved vendors for cannabis material, packaging, production supplies, testing labs, and services. Source of every COA and license on file.",
       },
       {
-        name: "Approval & Certs",
+        name: "Supplier Approval",
         href: "/supplier-qualification",
         icon: ShieldCheck,
         description:
@@ -259,6 +261,9 @@ const NAV_SECTIONS: NavSection[] = [
 
 const PAGE_TITLES: Record<string, string> = {
   "/dashboard": "Dashboard",
+  "/finished-goods": "Finished Goods",
+  "/labels": "Label Studio",
+  "/regulatory-intel": "Regulatory Intelligence",
   "/management-review": "Management Review",
   "/suppliers": "Suppliers",
   "/inspections": "Incoming Inspections",
@@ -295,12 +300,14 @@ export function WorkspaceLayout({
   account,
   toolbar,
   onSignOut,
+  signingOut = false,
 }: {
   children: React.ReactNode;
   multiSite?: boolean;
   account?: React.ReactNode;
   toolbar?: React.ReactNode;
   onSignOut?: () => void;
+  signingOut?: boolean;
 }) {
   const [location] = useLocation();
   const [navSearch, setNavSearch] = useState("");
@@ -339,6 +346,31 @@ export function WorkspaceLayout({
     });
   const [mobileOpen, setMobileOpen] = useState(false);
   const asideRef = useRef<HTMLElement>(null);
+  const previousLocation = useRef(location);
+  useEffect(() => {
+    document.title = `${getPageTitle(location)} · CannaQ`;
+    if (previousLocation.current === location) return;
+    previousLocation.current = location;
+    setMobileOpen(false);
+    setNavSearch("");
+    const section = NAV_SECTIONS.find((section) =>
+      section.items.some(
+        (item) =>
+          location === item.href || location.startsWith(`${item.href}/`),
+      ),
+    );
+    if (section?.heading) {
+      const heading = section.heading;
+      setOpenSections((previous) => ({ ...previous, [heading]: true }));
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
+    const frame = requestAnimationFrame(() =>
+      document
+        .getElementById("workspace-content")
+        ?.focus({ preventScroll: true }),
+    );
+    return () => cancelAnimationFrame(frame);
+  }, [location]);
   const mobileToggleRef = useRef<HTMLButtonElement>(null);
   const wasMobileOpen = useRef(false);
   useEffect(() => {
@@ -356,9 +388,11 @@ export function WorkspaceLayout({
         setMobileOpen(false);
       }
       if (event.key !== "Tab") return;
-      const items = asideRef.current?.querySelectorAll<HTMLElement>(
-        "a[href], button:not([disabled])",
-      );
+      const items = Array.from(
+        asideRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]',
+        ) ?? [],
+      ).filter((item) => item.getClientRects().length > 0);
       if (!items?.length) return;
       const first = items[0],
         last = items[items.length - 1];
@@ -410,17 +444,7 @@ export function WorkspaceLayout({
     });
   };
 
-  // ── Keep the sidebar where you left it ─────────────────────────────────────
-  //
-  // Every page wraps ITSELF in <AppLayout>, so a route change unmounts the whole
-  // layout and builds it again — sidebar included — and the scroll snaps back to
-  // the top. On a long nav that means hunting for where you were after every
-  // click. The real cure is hoisting the layout above the router, which touches
-  // every page; this remembers the position instead, so it is correct either way
-  // and costs one file.
-  //
-  // sessionStorage, not localStorage: where you were in the nav belongs to this
-  // tab and this sitting, not to the browser for ever.
+  // Restore the navigation position when returning from setup or reloading.
   const navScrollRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = navScrollRef.current;
@@ -474,7 +498,7 @@ export function WorkspaceLayout({
                 <RecordMark className="h-8 w-8" />
               </Link>
             ) : (
-              <BrandMark />
+              <BrandMark href="/dashboard" />
             )}
           </div>
           <div
@@ -607,7 +631,7 @@ export function WorkspaceLayout({
               same sign-out directly, so a working logout is always present. */}
             <div className={`border-t space-y-3 ${collapsed ? "p-2" : "p-4"}`}>
               <Link
-                href="/onboarding"
+                href={onboardingDestination(location + window.location.search)}
                 className="cq-text-action"
                 aria-label="Workspace setup and preferences"
               >
@@ -628,11 +652,13 @@ export function WorkspaceLayout({
                 size="sm"
                 className={`w-full gap-2 ${collapsed ? "justify-center px-0" : "justify-start"}`}
                 onClick={onSignOut}
+                disabled={signingOut}
+                aria-busy={signingOut}
                 data-testid="button-sign-out"
                 aria-label="Sign out"
               >
                 <LogOut className="h-4 w-4" />
-                {!collapsed && "Sign out"}
+                {!collapsed && (signingOut ? "Signing out…" : "Sign out")}
               </Button>
             </div>
           </div>
@@ -706,11 +732,32 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   });
   const multiSite = (mySites?.facilities?.length ?? 0) > 1;
   const { signOut } = useClerk();
+  const { toast } = useToast();
+  const [signingOut, setSigningOut] = useState(false);
+  const exitWorkspace = async () => {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await signOut({
+        redirectUrl: `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`,
+      });
+    } catch {
+      toast({
+        title: "Could not sign out",
+        description:
+          "Your session is still open. Check your connection and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSigningOut(false);
+    }
+  };
   return (
     <WorkspaceLayout
       multiSite={multiSite}
       account={<UserButton />}
-      onSignOut={() => void signOut()}
+      onSignOut={() => void exitWorkspace()}
+      signingOut={signingOut}
       toolbar={
         <>
           <FacilitySwitcher />

@@ -1,4 +1,3 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -51,7 +50,7 @@ export default function Recipes() {
   const inactiveCount = useMemo(() => (recipes ?? []).filter(r => !r.isActive).length, [recipes]);
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -126,7 +125,7 @@ export default function Recipes() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </>
   );
 }
 

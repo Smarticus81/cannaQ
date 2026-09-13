@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import {
   useGetTrainingRecord,
   useUpdateTrainingRecord,
@@ -181,11 +180,11 @@ export default function TrainingDetail(props: { params?: { id: string } }) {
       : null;
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-4xl mx-auto pb-12 print:max-w-none">
         {/* Print-only header */}
         <div className="hidden print:block border-b-2 border-black pb-4 mb-6">
-          <div className="flex items-start justify-between">
+          <div className="cq-page-heading flex items-start justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-1">CannaQ · Training Record</p>
               <h1 className="text-2xl font-bold font-mono">{record?.recordNumber}</h1>
@@ -204,7 +203,7 @@ export default function TrainingDetail(props: { params?: { id: string } }) {
           <Link href="/training" className="text-sm text-primary hover:underline mb-2 block">
             ← Back to Training Records
           </Link>
-          <div className="flex items-start justify-between gap-4">
+          <div className="cq-page-heading flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
                 {isLoading ? <Skeleton className="h-8 w-40" /> : record?.recordNumber}
@@ -699,7 +698,7 @@ export default function TrainingDetail(props: { params?: { id: string } }) {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }
 

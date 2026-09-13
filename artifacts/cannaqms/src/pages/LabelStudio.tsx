@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -159,9 +158,9 @@ export default function LabelStudio() {
   const [productType, setProductType] = useState<ProductType>("Flower");
 
   return (
-    <AppLayout>
+    <>
       <div className="max-w-6xl mx-auto py-6 space-y-6">
-        <div className="flex items-start justify-between gap-4">
+        <div className="cq-page-heading flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Label Studio</h1>
             {/* ⛔ 2026-09-01 — say what this screen IS. It used to describe its own
@@ -200,7 +199,7 @@ export default function LabelStudio() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppLayout>
+    </>
   );
 }
 

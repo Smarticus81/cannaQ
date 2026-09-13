@@ -1,4 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
+import { facilityDestination } from "@/lib/navigation";
 import { Building2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +26,7 @@ type Site = { id: number; name: string; code: string | null; state: string };
 
 export function FacilitySwitcher() {
   const { toast } = useToast();
+  const [location] = useLocation();
 
   const { data } = useQuery<{ facilities: Site[]; activeFacilityId: number | null }>({
     queryKey: ["me", "facilities"],
@@ -46,7 +49,7 @@ export function FacilitySwitcher() {
       if (!r.ok) throw new Error(((await r.json().catch(() => ({}))) as { error?: string }).error || "Could not switch facility");
       return r.json();
     },
-    onSuccess: () => window.location.reload(),
+    onSuccess: () => window.location.assign(`${import.meta.env.BASE_URL.replace(/\/$/, "")}${facilityDestination(location)}`),
     onError: (err: Error) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 

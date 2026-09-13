@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useQuery } from "@tanstack/react-query";
 import { useGetCurrentUser } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -332,13 +331,13 @@ export default function DestructionRecordDetail(props: { params?: { id: string }
   };
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-4xl mx-auto pb-12">
         <Link href="/destruction-records" className="text-sm text-primary hover:underline block">
           &larr; Back to Destruction Records
         </Link>
 
-        <div className="flex items-start justify-between gap-4">
+        <div className="cq-page-heading flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <Flame className="h-6 w-6 text-red-500" />
@@ -704,6 +703,6 @@ export default function DestructionRecordDetail(props: { params?: { id: string }
         isPending={closePending}
         onSign={handleClose}
       />
-    </AppLayout>
+    </>
   );
 }

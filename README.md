@@ -5,6 +5,14 @@ inspection, inventory and lot traceability, recipes and batch records, laborator
 testing, packaging and labels, nonconformances, CAPA, complaints, field actions,
 controlled documents, training, audit history, and facility-specific Metrc access.
 
+## Application entry
+
+Open [CannaQ](https://workspaceapi-server-production-a679.up.railway.app).
+The same address serves sign-in, workspace setup, and all business work areas.
+Returning users reach their dashboard; users completing setup continue to their
+requested page or chosen starting workflow. Sign-out returns to the public entry.
+See [platform navigation and verification](docs/PLATFORM_NAVIGATION.md).
+
 ## Run locally
 
 Requires Node.js 22.12+ (22 LTS recommended), pnpm 10.16, PostgreSQL, and a Clerk

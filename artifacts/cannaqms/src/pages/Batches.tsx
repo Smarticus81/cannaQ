@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListBatchRecords } from "@workspace/api-client-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,9 +62,9 @@ export default function Batches() {
   const failedDestroyedCount = (counts["failed"] ?? 0) + (counts["destroyed"] ?? 0);
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-start justify-between">
+        <div className="cq-page-heading flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
               <TermTip term="batch">Batch</TermTip> Records
@@ -214,6 +213,6 @@ export default function Batches() {
       </div>
 
       <ImportBatchDialog open={importOpen} onOpenChange={setImportOpen} />
-    </AppLayout>
+    </>
   );
 }

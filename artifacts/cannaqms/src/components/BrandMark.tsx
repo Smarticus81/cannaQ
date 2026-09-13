@@ -17,10 +17,10 @@ export function RecordMark({ className = "" }: { className?: string }) {
     </svg>
   );
 }
-export function BrandMark({ inverse = false }: { inverse?: boolean }) {
+export function BrandMark({ inverse = false, href = "/" }: { inverse?: boolean; href?: string }) {
   return (
     <Link
-      href="/"
+      href={href}
       className={`cq-brand ${inverse ? "cq-brand--inverse" : ""}`}
       aria-label="CannaQ home"
     >

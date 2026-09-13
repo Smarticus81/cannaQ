@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { SiteBadge } from "@/components/FacilitySite";
 import {
   useGetComplaint,
@@ -466,7 +465,7 @@ export default function ComplaintDetail(props: { params?: { id: string } }) {
   };
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-5xl mx-auto pb-12 print:max-w-none">
 
         {/* Header */}
@@ -477,7 +476,7 @@ export default function ComplaintDetail(props: { params?: { id: string } }) {
           >
             &larr; Back to Complaints
           </Link>
-          <div className="flex items-start justify-between gap-4">
+          <div className="cq-page-heading flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
                 {isLoading ? (
@@ -1305,6 +1304,6 @@ export default function ComplaintDetail(props: { params?: { id: string } }) {
         initialSourceLot={(complaint as { lotNumber?: string | null } | undefined)?.lotNumber ?? undefined}
         onCreated={() => { setDestructionOpen(false); toast({ title: "Destruction record created" }); }}
       />
-    </AppLayout>
+    </>
   );
 }

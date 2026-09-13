@@ -2,12 +2,13 @@ import type { PropsWithChildren } from "react";
 import { useAuth, useClerk } from "@clerk/react";
 import { Redirect, useLocation } from "wouter";
 import { useOnboarding, usePreferences } from "@/lib/onboarding";
+import { isPublicRoute, onboardingDestination } from "@/lib/navigation";
 import { OnboardingUnavailable } from "./OnboardingUnavailable";
 export function OnboardingGate({ children }: PropsWithChildren) {
   const [location] = useLocation();
   const { isSignedIn } = useAuth();
   const { signOut } = useClerk();
-  const publicRoute = location === "/" || location.startsWith("/sign-");
+  const publicRoute = isPublicRoute(location);
   const introduction = location === "/onboarding";
   const { data, isError, error, isFetching, refetch } = useOnboarding(
     !!isSignedIn && !publicRoute,
@@ -34,6 +35,12 @@ export function OnboardingGate({ children }: PropsWithChildren) {
     data.needsWorkspace ||
     (!data.completedAt && !data.deferredAt)
   )
-    return <Redirect to="/onboarding" />;
+    return (
+      <Redirect
+        to={onboardingDestination(
+          location + window.location.search + window.location.hash,
+        )}
+      />
+    );
   return children;
 }

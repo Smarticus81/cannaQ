@@ -1,4 +1,3 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListIncomingInspections } from "@workspace/api-client-react";
 import { useQuery } from "@tanstack/react-query";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -80,9 +79,9 @@ export default function Inspections() {
   );
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-start justify-between">
+        <div className="cq-page-heading flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Incoming Inspections</h1>
             <p className="text-muted-foreground">Log of material receipts and quality checks.</p>
@@ -229,6 +228,6 @@ export default function Inspections() {
           </Table>
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }

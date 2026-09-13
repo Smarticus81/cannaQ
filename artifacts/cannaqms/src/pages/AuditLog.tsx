@@ -1,5 +1,4 @@
 import { useState, useMemo, useCallback } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListAuditLog } from "@workspace/api-client-react";
 import type { AuditLogEntry } from "@workspace/api-client-react";
 import {
@@ -165,11 +164,11 @@ export default function AuditLog() {
   };
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-5">
 
         {/* Page header */}
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="cq-page-heading flex items-start justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Audit Log</h1>
             <p className="text-sm text-muted-foreground">
@@ -458,6 +457,6 @@ export default function AuditLog() {
         )}
 
       </div>
-    </AppLayout>
+    </>
   );
 }

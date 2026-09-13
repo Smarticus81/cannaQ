@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { SiteName, useFacilities } from "@/components/FacilitySite";
 import { useListNonConformances } from "@workspace/api-client-react";
 import { useQuery } from "@tanstack/react-query";
@@ -161,10 +160,10 @@ export default function NonConformances() {
   useEffect(() => { /* no-op — placeholder for future URL sync hooks */ }, [queueParam]);
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
         {/* ── Header ── */}
-        <div className="flex items-start justify-between">
+        <div className="cq-page-heading flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
               <TermTip term="nc">Non-Conformances</TermTip>
@@ -409,6 +408,6 @@ export default function NonConformances() {
           </p>
         )}
       </div>
-    </AppLayout>
+    </>
   );
 }

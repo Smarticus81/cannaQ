@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListTraining, useGetTrainingStats, useGetCurrentUser } from "@workspace/api-client-react";
 import type { TrainingRecord } from "@workspace/api-client-react";
 import {
@@ -207,9 +206,9 @@ export default function Training() {
   })();
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="cq-page-heading flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Training Records</h1>
             <p className="text-sm text-muted-foreground mt-1">
@@ -441,6 +440,6 @@ export default function Training() {
           </Table>
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }

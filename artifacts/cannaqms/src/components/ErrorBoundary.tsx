@@ -1,24 +1,3 @@
-// Session 42 (25 May feedback fix): top-level ErrorBoundary.
-//
-// Symptom this fixes: "Recipes tab → blank screen" and "+ New Batch → blank
-// screen" from the 25 May walkthrough. Root cause: when the API returned an
-// HTML error (e.g. a 5xx from a route querying a non-existent table on the
-// freshly-deployed Railway Postgres), client code that does
-// `(await fetch(...)).json()` threw a SyntaxError. With no boundary above the
-// route, React unmounted the entire tree, leaving only the empty <div id="root"/>.
-// Refresh recovered because the next mount started clean.
-//
-// This boundary catches render/effect errors below it and shows a recoverable
-// fallback instead of blanking. The class component pattern is required —
-// only class components can implement componentDidCatch / getDerivedStateFromError.
-//
-// Placement (see App.tsx): wraps <Switch> inside the QueryClientProvider so the
-// boundary's fallback can still reach the providers (e.g. for theming via
-// TooltipProvider's class scope). Wrapping individual routes would also work
-// and would let the rest of the app stay mounted, but wrapping the Switch is
-// the smallest blast-radius change for now. We can move to per-route boundaries
-// later if we want to keep the sidebar reachable when a single page crashes.
-
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -60,9 +39,8 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="max-w-md w-full rounded-lg border bg-card p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-foreground">Something went wrong</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              This page hit an unexpected error. Reloading usually clears it. If it
-              keeps happening, the API may be returning a non-JSON response — open
-              DevTools → Network and check the failing request.
+              This work area could not open. Try reloading it, or return to your
+              dashboard and continue with another work area.
             </p>
             {isDev && (
               <pre className="mt-3 max-h-48 overflow-auto rounded bg-muted p-2 text-xs text-muted-foreground">
@@ -70,8 +48,8 @@ export class ErrorBoundary extends Component<Props, State> {
               </pre>
             )}
             <div className="mt-4 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => this.setState({ error: null })}>
-                Dismiss
+              <Button variant="outline" asChild>
+                <a href={`${import.meta.env.BASE_URL}dashboard`}>Back to dashboard</a>
               </Button>
               <Button onClick={this.handleReload}>Reload</Button>
             </div>

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -192,9 +191,9 @@ export default function FinishedGoods() {
   };
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-start justify-between gap-4">
+        <div className="cq-page-heading flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <PackageCheck className="h-6 w-6 text-emerald-600" />
@@ -403,6 +402,6 @@ export default function FinishedGoods() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </>
   );
 }

@@ -61,23 +61,23 @@ export function NewQualityEventButton() {
           <DropdownMenuLabel>Log a quality event</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openAfterMenu("nc"); }} data-testid="menu-new-nc">
+          <DropdownMenuItem onSelect={() => openAfterMenu("nc")} data-testid="menu-new-nc">
             <AlertTriangle className="h-4 w-4 mr-2 text-amber-600" />
             Non-Conformance
           </DropdownMenuItem>
-          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openAfterMenu("capa"); }} data-testid="menu-new-capa">
+          <DropdownMenuItem onSelect={() => openAfterMenu("capa")} data-testid="menu-new-capa">
             <ClipboardList className="h-4 w-4 mr-2 text-blue-600" />
             CAPA
           </DropdownMenuItem>
 
           {isApprover && (
-            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openAfterMenu("complaint"); }} data-testid="menu-new-complaint">
+            <DropdownMenuItem onSelect={() => openAfterMenu("complaint")} data-testid="menu-new-complaint">
               <MessageSquareWarning className="h-4 w-4 mr-2 text-rose-600" />
               Complaint
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openAfterMenu("fa"); }} data-testid="menu-new-fa">
+          <DropdownMenuItem onSelect={() => openAfterMenu("fa")} data-testid="menu-new-fa">
             <ShieldAlert className="h-4 w-4 mr-2 text-red-600" />
             {isApprover ? "Field Action" : "Request Field Action"}
           </DropdownMenuItem>

@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import {
   useGetBatchRecord,
   useUpdateBatchRecord,
@@ -2126,13 +2125,13 @@ export default function BatchDetail(props: { params?: { id: string } }) {
 
   if (isLoading) {
     return (
-      <AppLayout>
+      <>
         <div className="max-w-6xl mx-auto space-y-6 py-6">
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-64 w-full" />
         </div>
-      </AppLayout>
+      </>
     );
   }
 
@@ -2465,12 +2464,12 @@ export default function BatchDetail(props: { params?: { id: string } }) {
   }
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-6xl mx-auto pb-16">
 
         {/* ── Print-only document header ── */}
         <div className="hidden print:block border-b-2 pb-4 mb-4">
-          <div className="flex justify-between items-start">
+          <div className="cq-page-heading flex justify-between items-start">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Batch Production Record</p>
               <h1 className="text-2xl font-bold mt-1">{batch?.batchNumber} — {batch?.productName}</h1>
@@ -2500,7 +2499,7 @@ export default function BatchDetail(props: { params?: { id: string } }) {
           <Link href="/batches" className="text-sm text-primary hover:underline mb-3 block">
             ← Back to Batch Records
           </Link>
-          <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="cq-page-heading flex items-start justify-between gap-4 flex-wrap">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
                 {batch?.batchNumber ?? <Skeleton className="h-8 w-[200px]" />}
@@ -5461,7 +5460,7 @@ export default function BatchDetail(props: { params?: { id: string } }) {
           </DialogContent>
         </Dialog>
       </div>
-    </AppLayout>
+    </>
   );
 }
 

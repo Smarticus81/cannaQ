@@ -1,6 +1,5 @@
 import { displayLotNumber } from "@/lib/lotDisplay";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListInventoryItems, useGetCurrentUser, getListInventoryItemsQueryKey, type InventoryItem } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -269,9 +268,9 @@ export default function Inventory() {
   }
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-start justify-between">
+        <div className="cq-page-heading flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Inventory</h1>
             <p className="text-muted-foreground">
@@ -304,7 +303,7 @@ export default function Inventory() {
         <InventoryCharts grouped={grouped} />
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex rounded-md border bg-card p-0.5">
+          <div className="inline-flex max-w-full flex-wrap rounded-md border bg-card p-0.5">
             <Button
               size="sm"
               variant={view === "grouped" ? "default" : "ghost"}
@@ -628,6 +627,6 @@ export default function Inventory() {
         onDone={() => { void queryClient.invalidateQueries({ queryKey: getListInventoryItemsQueryKey() }); }}
       />
       <ReorderPointsDialog open={reorderOpen} onOpenChange={setReorderOpen} />
-    </AppLayout>
+    </>
   );
 }

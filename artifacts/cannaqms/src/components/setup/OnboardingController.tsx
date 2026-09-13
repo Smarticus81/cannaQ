@@ -11,7 +11,7 @@ type Props = {
   initial: OnboardingSnapshot;
   onFinished: (snapshot: OnboardingSnapshot) => void;
   onDeferred: (snapshot: OnboardingSnapshot) => void;
-  onExit?: () => void;
+  onExit?: () => void | Promise<void>;
 };
 
 // Serialize writes and flush edits entered while an earlier save was in flight.
@@ -141,7 +141,22 @@ export function OnboardingController({
       busy={busy}
       paused={paused}
       onChange={change}
-      onExit={onExit}
+      onExit={
+        onExit
+          ? () =>
+              void action(async () => {
+                await save();
+                try {
+                  await onExit();
+                } catch {
+                  throw new OnboardingRequestError(
+                    "Could not sign out. Your session is still open; check your connection and try again.",
+                    503,
+                  );
+                }
+              })
+          : undefined
+      }
       onResume={() => setPaused(false)}
       onRetry={() => void action(save)}
       onReload={() => void reload()}

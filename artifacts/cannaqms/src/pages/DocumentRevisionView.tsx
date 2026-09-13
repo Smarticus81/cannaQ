@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useRoute } from "wouter";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Printer, Archive } from "lucide-react";
@@ -45,7 +44,7 @@ export default function DocumentRevisionView() {
   });
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-3 print:hidden">
           <Link
@@ -107,6 +106,6 @@ export default function DocumentRevisionView() {
           </>
         )}
       </div>
-    </AppLayout>
+    </>
   );
 }

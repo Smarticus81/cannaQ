@@ -2,7 +2,6 @@ import { displayLotNumber, isBlankLotNumber } from "@/lib/lotDisplay";
 import { useGetCurrentUser } from "@workspace/api-client-react";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "wouter";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -78,12 +77,12 @@ export default function LotDetail() {
     } finally { setAssignBusy(false); }
   }
 
-  if (!lot) return <AppLayout><Skeleton className="h-32 w-full" /></AppLayout>;
+  if (!lot) return <><Skeleton className="h-32 w-full" /></>;
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-start justify-between">
+        <div className="cq-page-heading flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold tracking-tight font-mono">{displayLotNumber(lot.lotNumber)}</h1>
@@ -190,7 +189,7 @@ export default function LotDetail() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppLayout>
+    </>
   );
 }
 

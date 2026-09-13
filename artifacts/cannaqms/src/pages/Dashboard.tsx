@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { SetupChecklist } from "@/components/setup/SetupChecklist";
 import {
   useDashboardLayout,
@@ -1118,7 +1117,7 @@ export default function Dashboard() {
   } = useDashboardLayout(meRole);
 
   return (
-    <AppLayout>
+    <>
       <DashboardLayoutProvider value={layoutCtx}>
       <div className="flex flex-col gap-6 pb-12">
 
@@ -1141,7 +1140,7 @@ export default function Dashboard() {
             : `Good ${partOfDay}`;
           const today = format(new Date(), "EEEE, MMMM d");
           return (
-            <div className="flex items-start justify-between gap-4">
+            <div className="cq-page-heading flex items-start justify-between gap-4">
               <div>
                 <span className="cq-eyebrow">YOUR WORKING DAY, IN FOCUS</span>
                 <h1 className="cq-dashboard-greeting">{greeting}.</h1>
@@ -3450,6 +3449,6 @@ export default function Dashboard() {
         </Sec>
       </div>
       </DashboardLayoutProvider>
-    </AppLayout>
+    </>
   );
 }

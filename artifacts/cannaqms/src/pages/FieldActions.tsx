@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListFieldActions, useGetCurrentUser } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
@@ -81,11 +80,11 @@ export default function FieldActions() {
   ];
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-6xl mx-auto">
 
         {/* ── Header ── */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="cq-page-heading flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
               <TermTip term="fieldAction">Field Actions</TermTip>
@@ -316,6 +315,6 @@ export default function FieldActions() {
           Other — 30 days (R 420.209)
         </p>
       </div>
-    </AppLayout>
+    </>
   );
 }

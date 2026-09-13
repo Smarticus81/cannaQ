@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -196,9 +195,9 @@ export default function Licenses() {
   }
 
   return (
-    <AppLayout>
+    <>
       <div className="mx-auto max-w-5xl p-4 sm:p-6 space-y-4">
-        <div className="flex items-center justify-between gap-3">
+        <div className="cq-page-heading flex items-center justify-between gap-3">
           <div>
             <h1 className="text-xl font-semibold flex items-center gap-2">
               <Scale className="h-5 w-5 text-primary" /> Licenses &amp; Certificates
@@ -341,6 +340,6 @@ export default function Licenses() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AppLayout>
+    </>
   );
 }

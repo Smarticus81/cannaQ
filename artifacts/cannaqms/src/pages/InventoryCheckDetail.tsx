@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useQuery } from "@tanstack/react-query";
 import { useGetCurrentUser } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -163,11 +162,11 @@ export default function InventoryCheckDetail(props: { params?: { id: string } })
   const fmtQty = (q?: number | null, uom?: string | null) => q == null ? "—" : `${q}${uom ? ` ${uom}` : ""}`;
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-5xl mx-auto pb-12">
         <Link href="/inventory-checks" className="text-sm text-primary hover:underline block">&larr; Back to Inventory Checks</Link>
 
-        <div className="flex items-start justify-between gap-4">
+        <div className="cq-page-heading flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <ClipboardCheck className="h-6 w-6 text-primary" />
@@ -307,6 +306,6 @@ export default function InventoryCheckDetail(props: { params?: { id: string } })
         isPending={cancelPending}
         onConfirm={handleCancel}
       />
-    </AppLayout>
+    </>
   );
 }

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -45,7 +44,7 @@ export default function Corporate() {
   const total = (key: keyof SiteRow) => sites.reduce((n, s) => n + (Number(s[key]) || 0), 0);
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-6xl mx-auto pb-12">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Corporate View</h1>
@@ -152,6 +151,6 @@ export default function Corporate() {
           </CardContent>
         </Card>
       </div>
-    </AppLayout>
+    </>
   );
 }

@@ -251,6 +251,15 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
               "Unsaved changes"
             )}
           </div>
+          {onExit && (
+            <button
+              className="cq-text-action shrink-0"
+              onClick={onExit}
+              disabled={busy}
+            >
+              Save & sign out
+            </button>
+          )}
         </header>
         {paused ? (
           <section className="cq-onboarding-content cq-pause">
@@ -264,14 +273,14 @@ export function OnboardingExperience(props: OnboardingExperienceProps) {
               Your draft is saved to your account. Resume this setup when you
               are ready to continue.
             </p>
-            <button className="cq-action" onClick={onResume}>
+            {error && (
+              <p role="alert" className="text-destructive">
+                {error.message}
+              </p>
+            )}
+            <button className="cq-action" onClick={onResume} disabled={busy}>
               Resume setup <ArrowRight size={18} />
             </button>
-            {onExit && (
-              <button className="cq-text-action" onClick={onExit}>
-                Sign out
-              </button>
-            )}
           </section>
         ) : (
           <form

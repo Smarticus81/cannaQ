@@ -1,4 +1,3 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import {
   useGetSupplier, useUpdateSupplier, useReopenSupplier, useListSupplierAttachments, useGetSupplierRiskHistory,
   useGetCurrentUser, useGetCompanyProfile,
@@ -839,12 +838,12 @@ export default function SupplierDetail(props: { params?: { id: string } }) {
   }
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-5xl mx-auto pb-12 print:max-w-none">
 
         {/* Print-only header */}
         <div className="hidden print:block border-b-2 border-black pb-4 mb-6">
-          <div className="flex items-start justify-between">
+          <div className="cq-page-heading flex items-start justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-1">CannaQ · Supplier Record</p>
               <h1 className="text-2xl font-bold">{supplier?.supplierName}</h1>
@@ -866,7 +865,7 @@ export default function SupplierDetail(props: { params?: { id: string } }) {
           <Link href="/suppliers" className="text-sm text-primary hover:underline mb-2 block">
             &larr; Back to Suppliers
           </Link>
-          <div className="flex items-center justify-between">
+          <div className="cq-page-heading flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
                 {supplier?.supplierName || <Skeleton className="h-8 w-[200px]" />}
@@ -1558,6 +1557,6 @@ export default function SupplierDetail(props: { params?: { id: string } }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AppLayout>
+    </>
   );
 }

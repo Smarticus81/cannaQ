@@ -1,4 +1,3 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListSuppliers, useGetCompanyProfile } from "@workspace/api-client-react";
 import { accentClass, toneRiskTier, toneReviewStatus, type StatusTone } from "@/lib/status";
 import { useQuery } from "@tanstack/react-query";
@@ -300,9 +299,9 @@ export default function Suppliers() {
   const highCount     = suppliers?.filter((s) => s.riskTier === "High").length ?? 0;
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
-        <div className="flex items-start justify-between">
+        <div className="cq-page-heading flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Suppliers</h1>
             <p className="text-muted-foreground">Approved supplier list and quality ratings.</p>
@@ -459,6 +458,6 @@ export default function Suppliers() {
           </Table>
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }

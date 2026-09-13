@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { SiteBadge } from "@/components/FacilitySite";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -1829,36 +1828,36 @@ export default function CAPADetail(props: { params?: { id: string } }) {
 
   if (loading) {
     return (
-      <AppLayout>
+      <>
         <div className="max-w-5xl mx-auto pb-12 space-y-6">
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-4 w-96" />
           <div className="grid gap-4">{[1,2,3].map(i => <Skeleton key={i} className="h-32 w-full" />)}</div>
         </div>
-      </AppLayout>
+      </>
     );
   }
 
   if (!capa) {
     return (
-      <AppLayout>
+      <>
         <div className="max-w-5xl mx-auto pb-12">
           <Link href="/capas" className="text-sm text-primary hover:underline mb-2 block">← Back to CAPAs</Link>
           <p className="text-muted-foreground">CAPA not found.</p>
         </div>
-      </AppLayout>
+      </>
     );
   }
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-5xl mx-auto pb-12 print:max-w-none">
         {/* Header */}
         <div className={headerAccent ? `pl-3 ${headerAccent}` : undefined}>
           <Link href="/capas" className="text-sm text-primary hover:underline mb-2 block print:hidden">
             ← Back to CAPAs
           </Link>
-          <div className="flex items-start justify-between gap-4">
+          <div className="cq-page-heading flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h1 className="text-2xl font-bold tracking-tight font-mono">{capa.capaNumber}</h1>
@@ -3225,6 +3224,6 @@ export default function CAPADetail(props: { params?: { id: string } }) {
           onSign={handleUncancel}
         />
       </div>
-    </AppLayout>
+    </>
   );
 }

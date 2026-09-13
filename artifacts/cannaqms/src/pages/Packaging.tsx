@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useListPackagingDesigns } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
@@ -161,11 +160,11 @@ export default function Packaging() {
   ];
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-5xl mx-auto">
 
         {/* ── Header ── */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="cq-page-heading flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
               Packaging Designs
@@ -212,7 +211,7 @@ export default function Packaging() {
 
         {/* ── Filters + search ── */}
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1 border rounded-lg p-1 bg-muted/30">
+          <div className="flex max-w-full flex-wrap items-center gap-1 border rounded-lg p-1 bg-muted/30">
             {tabs.map(({ label, key, count }) => (
               <button
                 key={key}
@@ -337,6 +336,6 @@ export default function Packaging() {
           420.401–420.402. Approval requires Part 11 electronic signature.
         </p>
       </div>
-    </AppLayout>
+    </>
   );
 }

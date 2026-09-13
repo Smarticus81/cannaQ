@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "wouter";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -511,16 +510,16 @@ export default function InspectionDetail() {
 
   if (error) {
     return (
-      <AppLayout>
+      <>
         <div className="text-sm text-muted-foreground py-12 text-center space-y-2">
           <p>{error}</p>
           <Link href="/inspections" className="text-primary hover:underline">← Back to inspections</Link>
         </div>
-      </AppLayout>
+      </>
     );
   }
   if (loading || !inspection) {
-    return <AppLayout><Skeleton className="h-32 w-full" /></AppLayout>;
+    return <><Skeleton className="h-32 w-full" /></>;
   }
 
   const expiringSoon = (d: string | null) => {
@@ -546,7 +545,7 @@ export default function InspectionDetail() {
   const headerAccent = accentClass(headerTone);
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
         <div className={`flex items-start justify-between ${headerAccent ? `pl-3 ${headerAccent}` : ""}`}>
           <div>
@@ -1135,6 +1134,6 @@ export default function InspectionDetail() {
           noticeText={destructionItem ? `Scrapping failed inspection item "${destructionItem.itemName}"${destructionItem.quantityReceived != null ? ` \u2014 ${destructionItem.quantityReceived} ${destructionItem.quantityUom ?? ""}`.trimEnd() : ""}. Michigan CRA requires every destroyed cannabis package to be logged with its full METRC tag \u2014 enter the package tag(s) below.${destructionItem.dispositionNotes ? ` Notes: ${destructionItem.dispositionNotes}` : ""}` : undefined}
           onCreated={() => { setDestructionItem(null); toast({ title: "Destruction record created", description: "Logged for the scrapped item." }); }}
         />
-    </AppLayout>
+    </>
   );
 }

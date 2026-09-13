@@ -15,6 +15,12 @@ import {
 } from "@clerk/react";
 import { publishableKeyFromHost } from "@clerk/react/internal";
 import { BrandMark, QualityFlow } from "@/components/BrandMark";
+import { isPublicRoute } from "@/lib/navigation";
+const AppLayout = lazy(() =>
+  import("@/components/layout/AppLayout").then((module) => ({
+    default: module.AppLayout,
+  })),
+);
 import { OnboardingGate } from "@/components/setup/OnboardingGate";
 const Onboarding = lazy(() => import("@/pages/Onboarding"));
 import {
@@ -220,8 +226,7 @@ function ClerkQueryClientCacheInvalidator() {
 function RequireRouteSession({ children }: PropsWithChildren) {
   const [location] = useLocation();
   const { isLoaded, isSignedIn } = useAuth();
-  const publicRoute =
-    location === "/" || /^\/sign-(in|up)(\/|$)/.test(location);
+  const publicRoute = isPublicRoute(location);
   if (publicRoute) return children;
   if (!isLoaded)
     return (
@@ -233,6 +238,26 @@ function RequireRouteSession({ children }: PropsWithChildren) {
   return children;
 }
 
+function ApplicationFrame({ children }: PropsWithChildren) {
+  const [location] = useLocation();
+  if (isPublicRoute(location) || location === "/onboarding") return children;
+  return (
+    <AppLayout>
+      <ErrorBoundary key={location}>
+        <Suspense
+          fallback={
+            <div role="status" className="cq-loading">
+              Opening work area…
+            </div>
+          }
+        >
+          {children}
+        </Suspense>
+      </ErrorBoundary>
+    </AppLayout>
+  );
+}
+
 function ClerkProviderWithRoutes() {
   const [, setLocation] = useLocation();
   return (
@@ -242,6 +267,9 @@ function ClerkProviderWithRoutes() {
       appearance={clerkAppearance}
       signInUrl={`${basePath}/sign-in`}
       signUpUrl={`${basePath}/sign-up`}
+      signInFallbackRedirectUrl={`${basePath}/dashboard`}
+      signUpFallbackRedirectUrl={`${basePath}/onboarding`}
+      afterSignOutUrl={`${basePath}/`}
       localization={{
         signIn: {
           start: {
@@ -266,10 +294,6 @@ function ClerkProviderWithRoutes() {
       <QueryClientProvider client={queryClient}>
         <ClerkQueryClientCacheInvalidator />
         <TooltipProvider>
-          {/* Session 42 (25 May feedback fix): wrap routes in ErrorBoundary so a
-              render/parse error in one page doesn't unmount the whole tree and
-              leave a blank screen. See components/ErrorBoundary.tsx for the
-              root-cause analysis. */}
           <ErrorBoundary>
             <RequireRouteSession>
               <OnboardingGate>
@@ -283,110 +307,118 @@ function ClerkProviderWithRoutes() {
                     </div>
                   }
                 >
-                  <Switch>
-                    <Route path="/" component={Landing} />
-                    <Route path="/sign-in/*?" component={SignInPage} />
-                    <Route path="/sign-up/*?" component={SignUpPage} />
-                    <Route path="/onboarding" component={Onboarding} />
-                    <Route path="/dashboard" component={Dashboard} />
-                    <Route path="/corporate" component={Corporate} />
-                    <Route
-                      path="/management-review"
-                      component={ManagementReview}
-                    />
-                    <Route
-                      path="/management-review/reviews/:id"
-                      component={ManagementReviewRecord}
-                    />
-                    <Route path="/suppliers" component={Suppliers} />
-                    <Route path="/suppliers/:id" component={SupplierDetail} />
-                    <Route path="/inspections" component={Inspections} />
-                    <Route
-                      path="/inspections/:id"
-                      component={InspectionDetail}
-                    />
-                    <Route path="/inventory" component={Inventory} />
-                    <Route path="/finished-goods" component={FinishedGoods} />
-                    <Route
-                      path="/inventory-checks"
-                      component={InventoryChecks}
-                    />
-                    <Route
-                      path="/inventory-checks/:id"
-                      component={InventoryCheckDetail}
-                    />
-                    <Route path="/licenses" component={Licenses} />
-                    {/* Lots collapsed into Inventory (one section). The list now lives on
+                  <ApplicationFrame>
+                    <Switch>
+                      <Route path="/" component={Landing} />
+                      <Route path="/sign-in/*?" component={SignInPage} />
+                      <Route path="/sign-up/*?" component={SignUpPage} />
+                      <Route path="/onboarding" component={Onboarding} />
+                      <Route path="/dashboard" component={Dashboard} />
+                      <Route path="/corporate" component={Corporate} />
+                      <Route
+                        path="/management-review"
+                        component={ManagementReview}
+                      />
+                      <Route
+                        path="/management-review/reviews/:id"
+                        component={ManagementReviewRecord}
+                      />
+                      <Route path="/suppliers" component={Suppliers} />
+                      <Route path="/suppliers/:id" component={SupplierDetail} />
+                      <Route path="/inspections" component={Inspections} />
+                      <Route
+                        path="/inspections/:id"
+                        component={InspectionDetail}
+                      />
+                      <Route path="/inventory" component={Inventory} />
+                      <Route path="/finished-goods" component={FinishedGoods} />
+                      <Route
+                        path="/inventory-checks"
+                        component={InventoryChecks}
+                      />
+                      <Route
+                        path="/inventory-checks/:id"
+                        component={InventoryCheckDetail}
+                      />
+                      <Route path="/licenses" component={Licenses} />
+                      {/* Lots collapsed into Inventory (one section). The list now lives on
                 the Inventory "Lot Traceability" view; per-lot detail stays at
                 /lots/:id. Redirect the old list URL so existing links land right. */}
-                    <Route path="/lots">
-                      {() => <Redirect to="/inventory" />}
-                    </Route>
-                    <Route path="/lots/:id" component={LotDetail} />
-                    <Route path="/batches" component={Batches} />
-                    <Route path="/batches/:id" component={BatchDetail} />
-                    <Route path="/recipes" component={Recipes} />
-                    <Route path="/recipes/:id" component={RecipeDetail} />
-                    <Route
-                      path="/non-conformances"
-                      component={NonConformances}
-                    />
-                    <Route
-                      path="/non-conformances/:id"
-                      component={NonConformanceDetail}
-                    />
-                    <Route
-                      path="/destruction-records"
-                      component={DestructionRecords}
-                    />
-                    <Route
-                      path="/destruction-records/:id"
-                      component={DestructionRecordDetail}
-                    />
-                    <Route path="/complaints" component={Complaints} />
-                    <Route path="/complaints/:id" component={ComplaintDetail} />
-                    <Route path="/field-actions" component={FieldActions} />
-                    <Route
-                      path="/field-actions/:id"
-                      component={FieldActionDetail}
-                    />
-                    <Route path="/packaging" component={Packaging} />
-                    <Route path="/packaging/:id" component={PackagingDetail} />
-                    <Route path="/capas" component={CAPAs} />
-                    <Route path="/capas/:id" component={CAPADetail} />
-                    <Route path="/training" component={Training} />
-                    <Route path="/training/:id" component={TrainingDetail} />
-                    <Route path="/documents" component={Documents} />
-                    <Route
-                      path="/regulatory-intel"
-                      component={RegulatoryIntelligence}
-                    />
-                    <Route path="/labels" component={LabelStudio} />
-                    <Route
-                      path="/documents/:id/revisions/:rowId"
-                      component={DocumentRevisionView}
-                    />
-                    <Route path="/documents/:id" component={DocumentDetail} />
-                    <Route
-                      path="/supplier-qualification"
-                      component={SupplierQualification}
-                    />
-                    <Route
-                      path="/supplier-qualification/:id"
-                      component={SupplierQualificationDetail}
-                    />
-                    <Route
-                      path="/audit-log/supplier-requal"
-                      component={SupplierRequalAuditTrail}
-                    />
-                    <Route
-                      path="/audit-log/report"
-                      component={AuditLogReport}
-                    />
-                    <Route path="/audit-log" component={AuditLog} />
-                    <Route path="/settings" component={Settings} />
-                    <Route component={NotFound} />
-                  </Switch>
+                      <Route path="/lots">
+                        {() => <Redirect to="/inventory" />}
+                      </Route>
+                      <Route path="/lots/:id" component={LotDetail} />
+                      <Route path="/batches" component={Batches} />
+                      <Route path="/batches/:id" component={BatchDetail} />
+                      <Route path="/recipes" component={Recipes} />
+                      <Route path="/recipes/:id" component={RecipeDetail} />
+                      <Route
+                        path="/non-conformances"
+                        component={NonConformances}
+                      />
+                      <Route
+                        path="/non-conformances/:id"
+                        component={NonConformanceDetail}
+                      />
+                      <Route
+                        path="/destruction-records"
+                        component={DestructionRecords}
+                      />
+                      <Route
+                        path="/destruction-records/:id"
+                        component={DestructionRecordDetail}
+                      />
+                      <Route path="/complaints" component={Complaints} />
+                      <Route
+                        path="/complaints/:id"
+                        component={ComplaintDetail}
+                      />
+                      <Route path="/field-actions" component={FieldActions} />
+                      <Route
+                        path="/field-actions/:id"
+                        component={FieldActionDetail}
+                      />
+                      <Route path="/packaging" component={Packaging} />
+                      <Route
+                        path="/packaging/:id"
+                        component={PackagingDetail}
+                      />
+                      <Route path="/capas" component={CAPAs} />
+                      <Route path="/capas/:id" component={CAPADetail} />
+                      <Route path="/training" component={Training} />
+                      <Route path="/training/:id" component={TrainingDetail} />
+                      <Route path="/documents" component={Documents} />
+                      <Route
+                        path="/regulatory-intel"
+                        component={RegulatoryIntelligence}
+                      />
+                      <Route path="/labels" component={LabelStudio} />
+                      <Route
+                        path="/documents/:id/revisions/:rowId"
+                        component={DocumentRevisionView}
+                      />
+                      <Route path="/documents/:id" component={DocumentDetail} />
+                      <Route
+                        path="/supplier-qualification"
+                        component={SupplierQualification}
+                      />
+                      <Route
+                        path="/supplier-qualification/:id"
+                        component={SupplierQualificationDetail}
+                      />
+                      <Route
+                        path="/audit-log/supplier-requal"
+                        component={SupplierRequalAuditTrail}
+                      />
+                      <Route
+                        path="/audit-log/report"
+                        component={AuditLogReport}
+                      />
+                      <Route path="/audit-log" component={AuditLog} />
+                      <Route path="/settings" component={Settings} />
+                      <Route component={NotFound} />
+                    </Switch>
+                  </ApplicationFrame>
                 </Suspense>
               </OnboardingGate>
             </RequireRouteSession>

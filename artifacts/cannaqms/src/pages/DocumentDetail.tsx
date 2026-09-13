@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import {
   useGetDocument,
   useUpdateDocument,
@@ -881,7 +880,7 @@ export default function DocumentDetail(props: { params?: { id: string } }) {
   };
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-4xl mx-auto pb-12 print:max-w-none">
         {/* Formal print layout — replaces the on-screen editor view when printing. */}
         {doc && <DocumentPrintView doc={doc} />}
@@ -891,7 +890,7 @@ export default function DocumentDetail(props: { params?: { id: string } }) {
           <Link href="/documents" className="text-sm text-primary hover:underline mb-2 block">
             ← Back to Document Control
           </Link>
-          <div className="flex items-start justify-between gap-4">
+          <div className="cq-page-heading flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-2xl font-bold tracking-tight font-mono">
@@ -2102,7 +2101,7 @@ export default function DocumentDetail(props: { params?: { id: string } }) {
         isPending={uncancelPending}
         onSign={handleUncancel}
       />
-    </AppLayout>
+    </>
   );
 }
 

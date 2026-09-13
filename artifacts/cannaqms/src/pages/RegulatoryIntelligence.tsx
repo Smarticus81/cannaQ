@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -148,7 +147,7 @@ export default function RegulatoryIntelligence() {
   const canAnalyze = title.trim() && (text.trim() || sourceUrl.trim()) && !analyze.isPending;
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
@@ -346,7 +345,7 @@ export default function RegulatoryIntelligence() {
           </div>
         )}
       </div>
-    </AppLayout>
+    </>
   );
 }
 

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import {
   useGetSupplierQualification,
   useUpdateSupplierQualification,
@@ -328,11 +327,11 @@ export default function SupplierQualificationDetail(props: { params?: { id: stri
     : "bg-green-50 text-green-700 border-green-200";
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6 max-w-4xl mx-auto pb-12 print:max-w-none">
         {/* Print-only header */}
         <div className="hidden print:block border-b-2 border-black pb-4 mb-6">
-          <div className="flex items-start justify-between">
+          <div className="cq-page-heading flex items-start justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-1">CannaQ · Supplier {isCertificate ? "Certificate" : "Qualification"}</p>
               <h1 className="text-2xl font-bold font-mono">{qual?.qualNumber}</h1>
@@ -355,7 +354,7 @@ export default function SupplierQualificationDetail(props: { params?: { id: stri
           <Link href="/supplier-qualification" className="text-sm text-primary hover:underline mb-2 block">
             ← Back to Supplier Qualification
           </Link>
-          <div className="flex items-start justify-between gap-4">
+          <div className="cq-page-heading flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight font-mono">
                 {isLoading ? <Skeleton className="h-8 w-36" /> : qual?.qualNumber}
@@ -976,6 +975,6 @@ export default function SupplierQualificationDetail(props: { params?: { id: stri
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 }

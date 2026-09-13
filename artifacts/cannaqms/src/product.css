@@ -207,6 +207,7 @@ button:disabled {
 }
 .cq-onboarding-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 16px;
   align-items: center;
@@ -1502,4 +1503,15 @@ html[data-workspace-mode="focused"] .cq-orientation {
   background-image: none;
   box-shadow: none;
   min-height: 44px;
+}
+.cq-page-heading {
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.cq-page-heading > * {
+  max-width: 100%;
+  min-width: 0;
+}
+.cq-page-heading > .flex {
+  flex-wrap: wrap;
 }

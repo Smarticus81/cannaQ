@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useQuery } from "@tanstack/react-query";
 import {
   Table,
@@ -91,10 +90,10 @@ export default function DestructionRecords() {
   }, [records, search, fromDate, toDate]);
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
         {/* ── Header ── */}
-        <div className="flex items-start justify-between">
+        <div className="cq-page-heading flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <Flame className="h-6 w-6 text-red-500" />
@@ -206,6 +205,6 @@ export default function DestructionRecords() {
         onOpenChange={setCreateOpen}
         onCreated={() => { void refetch(); }}
       />
-    </AppLayout>
+    </>
   );
 }

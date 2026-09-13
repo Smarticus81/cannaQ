@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { SiteName, useFacilities } from "@/components/FacilitySite";
 import { useListComplaints } from "@workspace/api-client-react";
 import { useQuery } from "@tanstack/react-query";
@@ -120,10 +119,10 @@ export default function Complaints() {
   );
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-6">
         {/* ── Header ── */}
-        <div className="flex items-start justify-between">
+        <div className="cq-page-heading flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Complaints</h1>
             <p className="text-muted-foreground text-sm">
@@ -386,6 +385,6 @@ export default function Complaints() {
           </p>
         )}
       </div>
-    </AppLayout>
+    </>
   );
 }

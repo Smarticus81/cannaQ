@@ -1,4 +1,3 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -263,7 +262,7 @@ export default function RecipeDetail() {
   });
 
   if (isLoading || !recipe) {
-    return <AppLayout><Skeleton className="h-40 w-full" /></AppLayout>;
+    return <><Skeleton className="h-40 w-full" /></>;
   }
 
   // Change-control derived state. A frozen version (supersededByRecipeId set) is
@@ -283,7 +282,7 @@ export default function RecipeDetail() {
   const hasHistory = allVersions.length > 1;
 
   return (
-    <AppLayout>
+    <>
       <div className="space-y-4">
         <Link href="/recipes" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4 mr-1" /> Back to Recipes
@@ -516,7 +515,7 @@ export default function RecipeDetail() {
           </DialogContent>
         </Dialog>
       </div>
-    </AppLayout>
+    </>
   );
 }
 
